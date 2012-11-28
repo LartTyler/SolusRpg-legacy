@@ -19,7 +19,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author Tyler Lartonoix
  */
 public class ClassManager {
-    private final static Map<String, RpgClass> classes;
+    private static final Map<String, RpgClass> classes;
+    
+    public static final RpgClass DEFAULT_CLASS;
 
     static {
         File f = new File(Directories.CONFIG + "config.yml");
@@ -40,8 +42,10 @@ public class ClassManager {
             }
 
             classes = Collections.unmodifiableMap(cls);
+	    DEFAULT_CLASS = classes.get(conf.getString("config.default-class"));
         } else {
             classes = Collections.unmodifiableMap(new HashMap<String, RpgClass>());
+	    DEFAULT_CLASS = null;
         }
     }
 
