@@ -1,3 +1,4 @@
 config:
+  default-class: Classless
   classes:
     - Classless
