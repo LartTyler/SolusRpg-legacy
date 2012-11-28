@@ -1,0 +1,17 @@
+class:
+  name: Classless
+  description: The default class
+  permit-nodes:
+    can-use:
+      - "@WOOD_TOOLS"
+      - "@COMMON_ITEMS"
+    can-break:
+      - "@COMMON_ITEMS"
+    can-place:
+      - "@COMMON_ITEMS"
+    can-wear:
+      - "@LEATHER_ARMOR"
+    can-craft:
+      - "@COMMON_ITEMS"
+    can-smelt:
+      - "@COMMON_ITEMS"

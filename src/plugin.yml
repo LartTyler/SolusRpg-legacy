@@ -1,0 +1,11 @@
+name: SolusRpg
+version: 4.0
+description: The multi-purpose RP and player management plugin
+author: LartTyler / Daybreak Studios
+main: me.dbstudios.solusrpg.SolusRpg
+depend: [Spout, Vault]
+commands:
+  rpg:
+    description: Type /rpg help for assistance with this command.
+    aliases: [solus, solusrp]
+    usage: "Syntax error: Type /rpg help for assistance."
