@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package me.dbstudios.solusrpg.events;
+package me.dbstudios.solusrpg.event.block;
 
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.managers.PlayerManager;
