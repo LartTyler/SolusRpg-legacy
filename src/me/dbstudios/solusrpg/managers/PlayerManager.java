@@ -20,13 +20,13 @@ import org.bukkit.entity.Player;
 public class PlayerManager {
     private static final Map<UUID, RpgPlayer> players = new HashMap<>();
     
-    public static boolean add(UUID uuid, Player player) {
+    public static boolean add(Player player) {
 	try {
-	    players.put(uuid, new RpgPlayer(player));
+	    players.put(player.getUniqueId(), new RpgPlayer(player));
 	    
 	    return true;
 	} catch (RpgPlayerConfigException e) {
-	    SolusRpg.log(Level.SEVERE, "Could not insatance player data for '{0}' Reason: {1}.", player.getName(), e.getMessage());
+	    SolusRpg.log(Level.SEVERE, "Could not instance player data for '{0}'. Reason: {1}.", player.getName(), e.getMessage());
 	    player.kickPlayer("An error occurred while reading your player data, or creating you a new profile. Please contact an administrator.");
 	    
 	    return false;
