@@ -16,6 +16,10 @@ public class RpgConstants {
     static {
 	Map<Material, String[]> nameMap = new EnumMap<>(Material.class);
 	
+	nameMap.put(Material.WOOD, new String[] {
+	
+	});
+	
 	ITEM_NAME_MAP = Collections.unmodifiableMap(nameMap);
     }
 }
