@@ -5,7 +5,6 @@
 
 package me.dbstudios.solusrpg.event.block;
 
-import me.dbstudios.solusrpg.util.RpgConstants;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
