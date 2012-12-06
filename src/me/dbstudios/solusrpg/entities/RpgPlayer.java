@@ -3,12 +3,14 @@ package me.dbstudios.solusrpg.entities;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -73,6 +75,13 @@ public class RpgPlayer {
     }
     
     public RpgPlayer sendMessage(String msg) {
+	for (ChatColor c : ChatColor.values())
+	    msg = msg.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
+	
+	msg = msg.replaceAll("(?i)\\{player-name\\}", this.getName());
+	msg = msg.replaceAll("(?i)\\{display-name\\}", this.getDisplayName());
+	msg = msg.replaceAll("(?i)\\{class\\}", rpgClass.getName());
+	
 	basePlayer.sendMessage(msg);
 	
 	return this;
@@ -80,6 +89,13 @@ public class RpgPlayer {
     
     public RpgPlayer sendMessage(String msg, Object... args) {
 	return this.sendMessage(Util.format(msg, args));
+    }
+    
+    public RpgPlayer sendEventMessage(String msg, Map<String, String> args) {
+	for (String key : args.keySet())
+	    msg = msg.replaceAll("(?i)\\{" + key + "\\}", args.get(key));
+	
+	return this.sendMessage(msg);
     }
     
     public SpoutPlayer getBasePlayer() {
