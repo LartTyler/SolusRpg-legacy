@@ -15,7 +15,7 @@ import org.bukkit.event.HandlerList;
  *
  * @author Tyler Lartonoix
  */
-public class RpgPlayerEvent extends Event {
+public abstract class RpgPlayerEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     
     private final RpgPlayer player;
