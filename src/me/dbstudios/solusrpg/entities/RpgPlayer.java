@@ -3,6 +3,7 @@ package me.dbstudios.solusrpg.entities;
 
 import java.io.File;
 import java.io.IOException;
+import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.managers.ClassManager;
@@ -87,5 +88,9 @@ public class RpgPlayer {
     
     public RpgClass getRpgClass() {
 	return this.rpgClass;
+    }
+    
+    public boolean isAllowed(PermitNode node, String item) {
+	return rpgClass.isAllowed(node, item);
     }
 }
