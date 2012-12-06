@@ -7,23 +7,32 @@ package me.dbstudios.solusrpg.event.listeners;
 
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
+import me.dbstudios.solusrpg.event.player.RpgPlayerDamageByBlockEvent;
 import me.dbstudios.solusrpg.event.player.RpgPlayerDamageByEntityEvent;
 import me.dbstudios.solusrpg.event.player.RpgPlayerDamageByPlayerEvent;
 import me.dbstudios.solusrpg.event.player.RpgPlayerDamageEntityEvent;
-import me.dbstudios.solusrpg.event.player.RpgPlayerDamageEvent;
-import me.dbstudios.solusrpg.event.player.RpgPlayerEvent;
+import me.dbstudios.solusrpg.event.player.RpgPlayerGainHealthEvent;
+import me.dbstudios.solusrpg.event.player.RpgPlayerInteractEntityEvent;
+import me.dbstudios.solusrpg.event.player.RpgPlayerInteractEvent;
 import me.dbstudios.solusrpg.event.player.RpgPlayerJoinEvent;
 import me.dbstudios.solusrpg.event.player.RpgPlayerQuitEvent;
+import me.dbstudios.solusrpg.event.player.RpgPlayerShootBowEvent;
 import me.dbstudios.solusrpg.event.player.RpgPlayerSpawnEvent;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -105,6 +114,62 @@ public class EventDistributor implements Listener {
 	    
 	    ev.setCancelled(event.isCancelled());
 	    ev.setDamage(event.getDamage());
+	}
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEntityDamageByBlock(EntityDamageByBlockEvent ev) {
+	if (ev.getEntity() instanceof Player) {
+	    RpgPlayerDamageByBlockEvent event = new RpgPlayerDamageByBlockEvent((Player)ev.getEntity(), ev.getDamager(), ev.getCause(), ev.getDamage());
+	    
+	    Bukkit.getPluginManager().callEvent(event);
+	    
+	    ev.setCancelled(event.isCancelled());
+	    ev.setDamage(ev.getDamage());
+	}
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEntityRegainHealth(EntityRegainHealthEvent ev) {
+	if (ev.getEntity() instanceof Player) {
+	    RpgPlayerGainHealthEvent event = new RpgPlayerGainHealthEvent((Player)ev.getEntity(), ev.getAmount(), ev.getRegainReason());
+	    
+	    Bukkit.getPluginManager().callEvent(event);
+	    
+	    ev.setAmount(event.getAmount());
+	    ev.setCancelled(ev.isCancelled());
+	}
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent ev) {
+	RpgPlayerInteractEntityEvent event = new RpgPlayerInteractEntityEvent(ev.getPlayer(), ev.getRightClicked());
+	
+	Bukkit.getPluginManager().callEvent(event);
+	
+	ev.setCancelled(event.isCancelled());
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerInteractEvent(PlayerInteractEvent ev) {
+	RpgPlayerInteractEvent event = new RpgPlayerInteractEvent(ev.getPlayer(), ev.getAction(), ev.getItem(), ev.getClickedBlock(), ev.getBlockFace());
+	
+	Bukkit.getPluginManager().callEvent(event);
+	
+	ev.setCancelled(event.isCancelled());
+	ev.setUseInteractedBlock(event.useBlock());
+	ev.setUseItemInHand(event.useItem());
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEntityShootBow(EntityShootBowEvent ev) {
+	if (ev.getEntity() instanceof Player && ev.getProjectile() instanceof Projectile) {
+	    RpgPlayerShootBowEvent event = new RpgPlayerShootBowEvent((Player)ev.getEntity(), ev.getBow(), (Projectile)ev.getProjectile(), ev.getForce());
+	    
+	    Bukkit.getPluginManager().callEvent(event);
+	    
+	    ev.setCancelled(event.isCancelled());
+	    ev.setProjectile(event.getProjectile());
 	}
     }
 }
