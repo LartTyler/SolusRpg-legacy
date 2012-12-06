@@ -5,6 +5,7 @@
 
 package me.dbstudios.solusrpg.event.block;
 
+import me.dbstudios.solusrpg.util.RpgConstants;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
@@ -15,13 +16,15 @@ import org.getspout.spoutapi.block.SpoutBlock;
  *
  * @author tlartonoix
  */
-public class RpgBlockEvent extends Event {
+public abstract class RpgBlockEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     
+    private final String blockName;
     private final SpoutBlock block;
     
     public RpgBlockEvent(Block block) {
 	this.block = Util.toSpoutBlock(block);
+	this.blockName = Util.getItemName(block);
     }
     
     public SpoutBlock getBlock() {
@@ -34,5 +37,9 @@ public class RpgBlockEvent extends Event {
 
     public static HandlerList getHandlerList() {
 	return RpgBlockEvent.handlers;
+    }
+    
+    public String getBlockName() {
+	return this.blockName;
     }
 }
