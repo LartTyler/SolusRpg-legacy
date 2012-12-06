@@ -32,4 +32,13 @@ public class Util {
     public static SpoutBlock toSpoutBlock(Block block) {
 	return (new SpoutWorld(block.getWorld())).getBlockAt(block.getLocation());
     }
+    
+    public static String getItemName(Block block) {
+	String[] items = RpgConstants.ITEM_NAME_MAP.get(block.getType());
+	
+	if (block.getData() < items.length)
+	    return items[block.getData()];
+	else
+	    return block.getType().name();
+    }
 }
