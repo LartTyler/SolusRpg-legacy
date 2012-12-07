@@ -26,72 +26,80 @@ public class RpgPlayerInteractEvent extends RpgPlayerEvent implements Cancellabl
     private final SpoutItemStack item;
     private final SpoutBlock block;
     private final BlockFace face;
-    
+    private final String itemName;
+    private final String blockName;
+
     private boolean cancelled = false;
     private Result useBlock = Result.DEFAULT;
     private Result useItem = Result.DEFAULT;
-    
+
     public RpgPlayerInteractEvent(Player player, Action action, ItemStack item, Block block, BlockFace face) {
 	super(player);
-	
+
+	this.itemName = Util.getItemName(item.getType(), item.getData().getData());
+	this.blockName = Util.getItemName(block.getType(), block.getData());
 	this.action = action;
 	this.item = new SpoutItemStack(item);
 	this.block = Util.toSpoutBlock(block);
 	this.face = face;
     }
-    
+
     public Action getAction() {
 	return this.action;
     }
-    
+
     public BlockFace getBlockFace() {
 	return this.face;
     }
-    
+
     public SpoutBlock getClickedBlock() {
 	return this.block;
     }
-    
+
     public SpoutItemStack getItem() {
 	return this.item;
     }
-    
+
+    public String getItemName() {
+	return this.itemName;
+    }
+
     public Material getMaterial() {
 	return this.item.getMaterial();
     }
-    
+
     public boolean involvesBlock() {
 	return this.block != null;
     }
-    
+
     public boolean involvesItem() {
 	return this.item != null;
     }
-    
+
     public boolean isBlockInHand() {
 	return MaterialData.getBlock(this.item.getTypeId(), this.item.getData().getData()) != null;
     }
-    
+
     public boolean isCancelled() {
 	return this.cancelled;
     }
-    
+
     public void setCancelled(boolean cancelled) {
 	this.cancelled = cancelled;
     }
-    
+
     public void setUseBlock(Result useBlock) {
 	this.useBlock = useBlock;
     }
-    
+
     public void setUseItem(Result useItem) {
 	this.useItem = useItem;
     }
-    
+
     public Result useBlock() {
 	return this.useBlock;
     }
-    
+
     public Result useItem() {
 	return this.useItem;
     }

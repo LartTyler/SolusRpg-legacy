@@ -3,6 +3,7 @@ package me.dbstudios.solusrpg.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.getspout.spoutapi.SpoutWorld;
 import org.getspout.spoutapi.block.SpoutBlock;
@@ -28,17 +29,17 @@ public class Util {
 
         return list;
     }
-    
+
     public static SpoutBlock toSpoutBlock(Block block) {
 	return (new SpoutWorld(block.getWorld())).getBlockAt(block.getLocation());
     }
-    
-    public static String getItemName(Block block) {
-	String[] items = RpgConstants.ITEM_NAME_MAP.get(block.getType());
-	
-	if (block.getData() < items.length)
-	    return items[block.getData()];
+
+    public static String getItemName(Material type, byte data) {
+	String[] items = RpgConstants.ITEM_NAME_MAP.get(type);
+
+	if (data < items.length)
+	    return items[data];
 	else
-	    return block.getType().name();
+	    return type.name();
     }
 }

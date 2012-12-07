@@ -17,15 +17,15 @@ import org.getspout.spoutapi.block.SpoutBlock;
  */
 public abstract class RpgBlockEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    
+
     private final String blockName;
     private final SpoutBlock block;
-    
+
     public RpgBlockEvent(Block block) {
 	this.block = Util.toSpoutBlock(block);
-	this.blockName = Util.getItemName(block);
+	this.blockName = Util.getItemName(block.getType(), block.getData());
     }
-    
+
     public SpoutBlock getBlock() {
 	return this.block;
     }
@@ -37,7 +37,7 @@ public abstract class RpgBlockEvent extends Event {
     public static HandlerList getHandlerList() {
 	return RpgBlockEvent.handlers;
     }
-    
+
     public String getBlockName() {
 	return this.blockName;
     }
