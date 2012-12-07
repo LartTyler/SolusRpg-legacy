@@ -64,6 +64,10 @@ public class RpgPlayerInteractEvent extends RpgPlayerEvent implements Cancellabl
 	return this.itemName;
     }
 
+    public String getBlockName() {
+	return this.blockName;
+    }
+
     public Material getMaterial() {
 	return this.item.getMaterial();
     }
