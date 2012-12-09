@@ -1,8 +1,11 @@
 
 package me.dbstudios.solusrpg.util;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import me.dbstudios.solusrpg.SolusRpg;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.getspout.spoutapi.SpoutWorld;
@@ -41,5 +44,22 @@ public class Util {
 	    return items[data];
 	else
 	    return type.name();
+    }
+
+    public static void extract(String resource, File dest) {
+        (new File(dest.getPath().substring(0, dest.getPath().lastIndexOf(File.separator)))).mkdirs();
+
+        try (
+            InputStream in = Util.class.getResourceAsStream(resource);
+            OutputStream out = new FileOutputStream(dest)
+        ) {
+            dest.createNewFile();
+
+            int b;
+            while ((b = in.read()) != -1)
+                out.write(b);
+        } catch (IOException e) {
+            SolusRpg.log(Level.SEVERE, "Could not extract resource: {0}", resource);
+        }
     }
 }
