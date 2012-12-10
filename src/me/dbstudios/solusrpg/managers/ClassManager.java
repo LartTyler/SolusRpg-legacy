@@ -20,7 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class ClassManager {
     private static final Map<String, RpgClass> classes;
-    
+
     public static final RpgClass DEFAULT_CLASS;
 
     static {
@@ -55,5 +55,9 @@ public class ClassManager {
 
     public static RpgClass getClass(String cl) {
         return classes.get(cl);
+    }
+
+    public static int size() {
+	return classes.size();
     }
 }
