@@ -5,8 +5,7 @@
 
 package me.dbstudios.solusrpg.commands;
 
-import me.dbstudios.solusrpg.entities.RpgPlayer;
-import me.dbstudios.solusrpg.managers.PlayerManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,14 +16,14 @@ import org.bukkit.entity.Player;
  */
 public class RpgModifyCommand {
     public static boolean onCommand(CommandSender sender, Command command, String... args) {
-	if (sender instanceof Player)
-	    return RpgModifyCommand.modifyPlayer(PlayerManager.get((Player)sender), command, args);
+	switch (args.length) {
+	    case 1:
+		// This will open the GUI. Not high priority ATM, so we'll put it off.
 
-	return false;
-    }
-
-    private static boolean modifyPlayer(RpgPlayer sender, Command command, String... args) {
-
+		break;
+	    case 2:
+		
+	}
 
 	return false;
     }
