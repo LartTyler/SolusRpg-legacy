@@ -5,6 +5,7 @@
 
 package me.dbstudios.solusrpg.event.player;
 
+import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -17,38 +18,44 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 public class RpgPlayerDamageEntityEvent extends RpgPlayerEvent implements Cancellable {
     private final Entity target;
     private final DamageCause cause;
-    
+    private final String weaponName;
+
     private boolean cancelled = false;
     private int damage;
-    
+
     public RpgPlayerDamageEntityEvent(Player player, Entity target, DamageCause cause, int damage) {
 	super(player);
-	
+
+	this.weaponName = Util.getItemName(player.getItemInHand().getType(), player.getItemInHand().getData().getData());
 	this.target = target;
 	this.cause = cause;
 	this.damage = damage;
     }
-    
+
     public Entity getTarget() {
 	return this.target;
     }
-    
+
     public DamageCause getCause() {
 	return this.cause;
     }
-    
+
+    public String getWeapon() {
+	return this.weaponName;
+    }
+
     public int getDamage() {
 	return this.damage;
     }
-    
+
     public void setDamage(int damage) {
 	this.damage = damage;
     }
-    
+
     public boolean isCancelled() {
 	return this.cancelled;
     }
-    
+
     public void setCancelled(boolean cancelled) {
 	this.cancelled = cancelled;
     }
