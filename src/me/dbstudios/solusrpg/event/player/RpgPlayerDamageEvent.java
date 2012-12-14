@@ -15,33 +15,33 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
  */
 public class RpgPlayerDamageEvent extends RpgPlayerEvent implements Cancellable {
     private final DamageCause cause;
-    
+
     private boolean cancelled = false;
     private int damage;
-    
+
     public RpgPlayerDamageEvent(Player player, DamageCause cause, int damage) {
 	super(player);
-	
+
 	this.cause = cause;
 	this.damage = damage;
     }
-    
+
     public DamageCause getCause() {
 	return this.cause;
     }
-    
+
     public int getDamage() {
 	return this.damage;
     }
-    
+
     public void setDamage(int damage) {
 	this.damage = damage;
     }
-    
+
     public boolean isCancelled() {
 	return this.cancelled;
     }
-    
+
     public void setCancelled(boolean cancelled) {
 	this.cancelled = cancelled;
     }
