@@ -22,7 +22,6 @@ import org.getspout.spoutapi.player.SpoutPlayer;
  */
 public class RpgPlayer {
     private final SpoutPlayer basePlayer;
-    private final Level level;
 
     private RpgClass rpgClass;
 
