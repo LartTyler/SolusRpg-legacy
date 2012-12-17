@@ -15,3 +15,10 @@ class:
       - "@COMMON_ITEMS"
     can-smelt:
       - "@COMMON_ITEMS"
+  stats:
+    strength: 1  # Physical damage
+    magic: 1     # Magical damage
+    armor: 0     # Physical resistance
+    aura: 0      # Magical resistance
+    vitality: 50 # Health
+    precision: 5 # Critical ratio / damage modifier (0 - 25 = 125% dmg, 26 - 50 = 150% dmg, 51 - 75 = 175% dmg, 76 - 100 = 200% dmg)

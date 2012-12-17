@@ -3,9 +3,14 @@ package me.dbstudios.solusrpg.entities;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Map;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
+import me.dbstudios.solusrpg.entities.conf.Stat;
+import me.dbstudios.solusrpg.entities.conf.StatType;
+import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.util.Directories;
@@ -22,6 +27,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
  */
 public class RpgPlayer {
     private final SpoutPlayer basePlayer;
+    private final Map<StatType, Stat> stats;
 
     private RpgClass rpgClass;
 
@@ -47,6 +53,13 @@ public class RpgPlayer {
 	    this.rpgClass = ClassManager.getClass(cl);
 	else
 	    this.rpgClass = ClassManager.DEFAULT_CLASS;
+
+	Map<StatType, Stat> statMap = new EnumMap<>(StatType.class);
+
+	for (StatType t : StatType.values())
+	    statMap.put(t, new Stat(conf, t, "player.stats"));
+
+	this.stats = Collections.unmodifiableMap(statMap);
     }
 
     public String getName() {
@@ -115,5 +128,15 @@ public class RpgPlayer {
 
     public boolean isAllowed(PermitNode node, String item) {
 	return rpgClass.isAllowed(node, item);
+    }
+
+    public Stat getStat(StatType type) {
+	try {
+	    return this.stats.get(type).merge(this.rpgClass.getStat(type));
+	} catch (IncompatibleStatTypeException e) {
+	    e.printStackTrace();
+	}
+
+	return null;
     }
 }

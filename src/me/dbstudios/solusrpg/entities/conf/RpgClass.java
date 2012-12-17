@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class RpgClass {
     private final Map<PermitNode, List<Pattern>> permitNodes;
+    private final Map<StatType, Stat> stats;
     private final String systemName;
     private final String name;
     private final String bio;
@@ -48,6 +49,13 @@ public class RpgClass {
         }
 
         this.permitNodes = Collections.unmodifiableMap(nodes);
+
+	Map<StatType, Stat> statMap = new EnumMap<>(StatType.class);
+
+	for (StatType t : StatType.values())
+	    statMap.put(t, new Stat(conf, t, "class.stats"));
+
+	this.stats = Collections.unmodifiableMap(statMap);
     }
 
     public String getSystemName() {
@@ -68,5 +76,9 @@ public class RpgClass {
                 return true;
 
         return false;
+    }
+
+    public Stat getStat(StatType type) {
+	return this.stats.get(type);
     }
 }
