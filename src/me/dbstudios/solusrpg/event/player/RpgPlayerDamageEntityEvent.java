@@ -55,6 +55,10 @@ public class RpgPlayerDamageEntityEvent extends RpgPlayerEvent implements Cancel
 	this.damage = damage;
     }
 
+    public DamageType getDamageType() {
+        return this.type;
+    }
+
     public boolean isCancelled() {
 	return this.cancelled;
     }
