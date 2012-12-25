@@ -11,3 +11,10 @@ config:
   default-class: Classless
   classes:
     - Classless
+  defaults:
+    stats:
+      strength: 1
+      resistance: 0
+      vitality: 50
+      focus: 5
+      
