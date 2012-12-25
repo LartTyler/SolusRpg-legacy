@@ -40,10 +40,11 @@ public class Util {
     public static String getItemName(Material type, byte data) {
 	String[] items = RpgConstants.ITEM_NAME_MAP.get(type);
 
-	if (data < items.length)
-	    return items[data];
-	else
-	    return type.name();
+        if (items != null)
+            if (data < items.length)
+                return items[data];
+
+        return type.name();
     }
 
     public static void extract(String resource, File dest) {
