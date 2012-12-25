@@ -5,6 +5,7 @@
 
 package me.dbstudios.solusrpg.event.player;
 
+import me.dbstudios.solusrpg.util.DamageType;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -15,13 +16,13 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
  */
 public class RpgPlayerDamageByEntityEvent extends RpgPlayerDamageEvent {
     private final Entity damager;
-    
-    public RpgPlayerDamageByEntityEvent(Player player, Entity damager, DamageCause cause, int damage) {
-	super(player, cause, damage);
-	
+
+    public RpgPlayerDamageByEntityEvent(Player player, Entity damager, DamageCause cause, int damage, DamageType type) {
+	super(player, cause, damage, type);
+
 	this.damager = damager;
     }
-    
+
     public Entity getDamager() {
 	return this.damager;
     }

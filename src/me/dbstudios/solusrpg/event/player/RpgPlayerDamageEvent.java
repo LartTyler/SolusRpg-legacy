@@ -5,6 +5,7 @@
 
 package me.dbstudios.solusrpg.event.player;
 
+import me.dbstudios.solusrpg.util.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -15,15 +16,17 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
  */
 public class RpgPlayerDamageEvent extends RpgPlayerEvent implements Cancellable {
     private final DamageCause cause;
+    private final DamageType type;
 
     private boolean cancelled = false;
     private int damage;
 
-    public RpgPlayerDamageEvent(Player player, DamageCause cause, int damage) {
+    public RpgPlayerDamageEvent(Player player, DamageCause cause, int damage, DamageType type) {
 	super(player);
 
 	this.cause = cause;
 	this.damage = damage;
+        this.type = type;
     }
 
     public DamageCause getCause() {
@@ -36,6 +39,10 @@ public class RpgPlayerDamageEvent extends RpgPlayerEvent implements Cancellable 
 
     public void setDamage(int damage) {
 	this.damage = damage;
+    }
+
+    public DamageType getDamageType() {
+        return this.type;
     }
 
     public boolean isCancelled() {

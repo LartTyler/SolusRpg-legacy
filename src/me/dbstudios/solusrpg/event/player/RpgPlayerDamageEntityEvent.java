@@ -5,6 +5,7 @@
 
 package me.dbstudios.solusrpg.event.player;
 
+import me.dbstudios.solusrpg.util.DamageType;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,17 +20,19 @@ public class RpgPlayerDamageEntityEvent extends RpgPlayerEvent implements Cancel
     private final Entity target;
     private final DamageCause cause;
     private final String weaponName;
+    private final DamageType type;
 
     private boolean cancelled = false;
     private int damage;
 
-    public RpgPlayerDamageEntityEvent(Player player, Entity target, DamageCause cause, int damage) {
+    public RpgPlayerDamageEntityEvent(Player player, Entity target, DamageCause cause, int damage, DamageType type) {
 	super(player);
 
 	this.weaponName = Util.getItemName(player.getItemInHand().getType(), player.getItemInHand().getData().getData());
 	this.target = target;
 	this.cause = cause;
 	this.damage = damage;
+        this.type = type;
     }
 
     public Entity getTarget() {

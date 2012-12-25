@@ -9,6 +9,7 @@ import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.player.*;
 import me.dbstudios.solusrpg.managers.PlayerManager;
+import me.dbstudios.solusrpg.util.DamageType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -80,21 +81,21 @@ public class EventDistributor implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent ev) {
 	if (ev.getEntity() instanceof Player && ev.getDamager() instanceof Player) {
-	    RpgPlayerDamageByPlayerEvent event = new RpgPlayerDamageByPlayerEvent((Player)ev.getEntity(), (Player)ev.getDamager(), ev.getCause(), ev.getDamage());
+	    RpgPlayerDamageByPlayerEvent event = new RpgPlayerDamageByPlayerEvent((Player)ev.getEntity(), (Player)ev.getDamager(), ev.getCause(), ev.getDamage(), DamageType.PHYSICAL);
 
 	    Bukkit.getPluginManager().callEvent(event);
 
 	    ev.setCancelled(event.isCancelled());
 	    ev.setDamage(event.getDamage());
 	} else if (ev.getEntity() instanceof Player) {
-	    RpgPlayerDamageByEntityEvent event = new RpgPlayerDamageByEntityEvent((Player)ev.getEntity(), ev.getDamager(), ev.getCause(), ev.getDamage());
+	    RpgPlayerDamageByEntityEvent event = new RpgPlayerDamageByEntityEvent((Player)ev.getEntity(), ev.getDamager(), ev.getCause(), ev.getDamage(), DamageType.PHYSICAL);
 
 	    Bukkit.getPluginManager().callEvent(event);
 
 	    ev.setCancelled(event.isCancelled());
 	    ev.setDamage(event.getDamage());
 	} else if (ev.getDamager() instanceof Player) {
-	    RpgPlayerDamageEntityEvent event = new RpgPlayerDamageEntityEvent((Player)ev.getDamager(), ev.getEntity(), ev.getCause(), ev.getDamage());
+	    RpgPlayerDamageEntityEvent event = new RpgPlayerDamageEntityEvent((Player)ev.getDamager(), ev.getEntity(), ev.getCause(), ev.getDamage(), DamageType.PHYSICAL);
 
 	    Bukkit.getPluginManager().callEvent(event);
 
@@ -106,7 +107,7 @@ public class EventDistributor implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageByBlock(EntityDamageByBlockEvent ev) {
 	if (ev.getEntity() instanceof Player) {
-	    RpgPlayerDamageByBlockEvent event = new RpgPlayerDamageByBlockEvent((Player)ev.getEntity(), ev.getDamager(), ev.getCause(), ev.getDamage());
+	    RpgPlayerDamageByBlockEvent event = new RpgPlayerDamageByBlockEvent((Player)ev.getEntity(), ev.getDamager(), ev.getCause(), ev.getDamage(), DamageType.PHYSICAL);
 
 	    Bukkit.getPluginManager().callEvent(event);
 

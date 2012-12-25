@@ -89,6 +89,7 @@ public class RpgStockListener implements Listener {
 
 	if (!ev.isCancelled()) {
 	    // TODO: Damage modifications based on player's stats
+            
 	}
     }
 }
