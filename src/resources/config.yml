@@ -14,7 +14,8 @@ config:
   defaults:
     stats:
       strength: 1
+      magic: 0
+      armor: 0
       aura: 0
-      resistance: 0
       vitality: 50
-      focus: 5
+      precision: 5
