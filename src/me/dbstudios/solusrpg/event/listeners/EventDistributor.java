@@ -5,6 +5,7 @@
 
 package me.dbstudios.solusrpg.event.listeners;
 
+import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.player.*;
@@ -102,6 +103,34 @@ public class EventDistributor implements Listener {
 	    ev.setCancelled(event.isCancelled());
 	    ev.setDamage(event.getDamage());
 	}
+
+        /*
+        // Modify the damage dealt to scale to the increased health potentially provided by Solus
+        if (!ev.isCancelled() && ev.getDamage() > 0 && ev.getEntity() instanceof Player) {
+            RpgPlayer player = PlayerManager.get((Player)ev.getEntity());
+            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
+
+            // This value has the potential to be zero. This could possibly cause conflicts further down the road for other plugins...
+            // See postEntityDamageByEntity
+            ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+            player.setHealth(player.getHealth() - ev.getDamage());
+        }
+        */
+    }
+
+    // This is the more desireable way to modify the damage a player will take. Since HIGHEST priority occurs last, this would allow any damage the player takes via the event
+    // system to be scaled appropriately before being applied.
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void postEntityDamageByEntity(EntityDamageByEntityEvent ev) {
+        if (!ev.isCancelled() && ev.getDamage() > 0 && ev.getEntity() instanceof Player) {
+            RpgPlayer player = PlayerManager.get((Player)ev.getEntity());
+
+            player.setHealth(player.getHealth() - ev.getDamage());
+
+            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
+
+            ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -116,6 +145,19 @@ public class EventDistributor implements Listener {
 	}
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void postEntityDamageByBlock(EntityDamageByBlockEvent ev) {
+        if (!ev.isCancelled() && ev.getDamage() > 0 && ev.getEntity() instanceof Player) {
+            RpgPlayer player = PlayerManager.get((Player)ev.getEntity());
+
+            player.setHealth(player.getHealth() - ev.getDamage());
+
+            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
+
+            ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityRegainHealth(EntityRegainHealthEvent ev) {
 	if (ev.getEntity() instanceof Player) {
@@ -126,6 +168,19 @@ public class EventDistributor implements Listener {
 	    ev.setAmount(event.getAmount());
 	    ev.setCancelled(ev.isCancelled());
 	}
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void postEntityRegainHealth(EntityRegainHealthEvent ev) {
+        if (!ev.isCancelled() && ev.getAmount() > 0 && ev.getEntity() instanceof Player) {
+            RpgPlayer player = PlayerManager.get((Player)ev.getEntity());
+
+            player.setHealth(player.getHealth() + ev.getAmount());
+
+            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
+
+            ev.setAmount(trueHealth - player.getBasePlayer().getHealth());
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
