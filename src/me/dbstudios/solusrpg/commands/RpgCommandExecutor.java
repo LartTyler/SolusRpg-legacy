@@ -15,9 +15,9 @@ import org.bukkit.command.CommandSender;
  */
 public class RpgCommandExecutor implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String... args) {
-	if (args.length >= 1 && args[0].equalsIgnoreCase("modify"))
+	if (args.length > 1 && args[0].equalsIgnoreCase("modify"))
 	    return RpgModifyCommand.onCommand(sender, command, args);
-	if (args.length >= 1 && args[0].equalsIgnoreCase("info"))
+	if (args.length > 1 && args[0].equalsIgnoreCase("info"))
 	    return RpgInfoCommand.onCommand(sender, command, args);
 
 	return false;
