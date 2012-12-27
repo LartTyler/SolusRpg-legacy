@@ -81,4 +81,8 @@ public class RpgClass {
     public Stat getStat(StatType type) {
 	return this.stats.get(type);
     }
+
+    public FileConfiguration getConfiguration() {
+        return YamlConfiguration.loadConfiguration(new File(Directories.CLASSES + this.systemName + ".yml"));
+    }
 }
