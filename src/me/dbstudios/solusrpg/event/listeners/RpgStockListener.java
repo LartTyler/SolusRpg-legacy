@@ -117,6 +117,7 @@ public class RpgStockListener implements Listener {
                     Map<String, String> args = new HashMap<>();
 
                     args.put("target", Util.getEntityName(ev.getTarget()));
+                    args.put("weapon", ev.getWeapon());
 
                     player.sendEventMessage(PhraseManager.getPhrase("player.no-damage"), args);
                 }
@@ -164,6 +165,7 @@ public class RpgStockListener implements Listener {
                     Map<String, String> args = new HashMap<>();
 
                     args.put("target", ev.getPlayer().getDisplayName());
+                    args.put("weapon", ev.getWeapon());
 
                     damager.sendEventMessage(PhraseManager.getPhrase("player.no-damage"), args);
                 }
