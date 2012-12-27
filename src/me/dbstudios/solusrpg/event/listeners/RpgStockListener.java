@@ -15,6 +15,7 @@ import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.player.*;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
+import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -107,7 +108,19 @@ public class RpgStockListener implements Listener {
                     break;
             }
 
-            ev.setDamage(damage);
+            if (damage > 0) {
+                ev.setDamage(damage);
+            } else {
+                ev.setCancelled(true);
+
+                if (PhraseManager.phraseExists("player.no-damage")) {
+                    Map<String, String> args = new HashMap<>();
+
+                    args.put("target", Util.getEntityName(ev.getTarget()));
+
+                    player.sendEventMessage(PhraseManager.getPhrase("player.no-damage"), args);
+                }
+            }
 	}
     }
 
@@ -142,7 +155,19 @@ public class RpgStockListener implements Listener {
                     break;
             }
 
-            ev.setDamage(Math.max(0, damage));
+            if (damage > 0) {
+                ev.setDamage(Math.max(0, damage));
+            } else {
+                ev.setCancelled(true);
+
+                if (PhraseManager.phraseExists("player.no-damage")) {
+                    Map<String, String> args = new HashMap<>();
+
+                    args.put("target", ev.getPlayer().getDisplayName());
+
+                    damager.sendEventMessage(PhraseManager.getPhrase("player.no-damage"), args);
+                }
+            }
         }
     }
 
@@ -162,7 +187,10 @@ public class RpgStockListener implements Listener {
                 break;
         }
 
-        ev.setDamage(Math.max(0, damage));
+        if (damage > 0)
+            ev.setDamage(Math.max(0, damage));
+        else
+            ev.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -181,6 +209,9 @@ public class RpgStockListener implements Listener {
                 break;
         }
 
-        ev.setDamage(Math.max(0, damage));
+        if (damage > 0)
+            ev.setDamage(Math.max(0, damage));
+        else
+            ev.setCancelled(true);
     }
 }

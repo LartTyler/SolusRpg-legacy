@@ -8,6 +8,7 @@ config:
       wear-deny-drop: "{aqua}Your inventory was full, so {green}{item}{aqua} was dropped."
       craft-deny: "{aqua}Your class ({green}{class}{aqua}) cannot craft {green}{item}{aqua}."
       smelt-deny: "{aqua}Your class ({green}{class}{aqua}) cannot smelt {green}{item}{aqua}."
+      no-damage: "{aqua}Your blows fail to damage {green}{target}{aqua}."
   default-class: Classless
   classes:
     - Classless
