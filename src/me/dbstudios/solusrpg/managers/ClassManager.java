@@ -2,11 +2,13 @@
 package me.dbstudios.solusrpg.managers;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
 import me.dbstudios.solusrpg.exceptions.RpgClassConfigException;
@@ -47,6 +49,16 @@ public class ClassManager {
             classes = Collections.unmodifiableMap(new HashMap<String, RpgClass>());
 	    DEFAULT_CLASS = null;
         }
+    }
+
+    public static List<RpgClass> matchClass(String search) {
+        List<RpgClass> matches = new ArrayList<>();
+
+        for (RpgClass cl : classes.values())
+            if (Pattern.compile("(?i)^" + search).matcher(cl.getName()).find() || Pattern.compile("(?i)^" + search).matcher(cl.getSystemName()).find())
+                matches.add(cl);
+
+        return matches;
     }
 
     public static boolean exists(String cl) {
