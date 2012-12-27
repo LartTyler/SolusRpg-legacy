@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import me.dbstudios.solusrpg.SolusRpg;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.getspout.spoutapi.SpoutWorld;
 import org.getspout.spoutapi.block.SpoutBlock;
 
@@ -62,5 +64,17 @@ public class Util {
         } catch (IOException e) {
             SolusRpg.log(Level.SEVERE, "Could not extract resource: {0}", resource);
         }
+    }
+
+    public static String getEntityName(Entity entity) {
+        String name;
+
+        if (entity instanceof Player) {
+            name = ((Player)entity).getDisplayName();
+        } else {
+            name = entity.getType().getName();
+        }
+
+        return name;
     }
 }
