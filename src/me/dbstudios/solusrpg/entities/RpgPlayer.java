@@ -8,6 +8,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
+import me.dbstudios.solusrpg.entities.conf.RpgHealthMeter;
 import me.dbstudios.solusrpg.entities.conf.Stat;
 import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
@@ -28,6 +29,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 public class RpgPlayer {
     private final SpoutPlayer basePlayer;
     private final Map<StatType, Stat> stats;
+    private final RpgHealthMeter health;
 
     private RpgClass rpgClass;
 
@@ -60,6 +62,8 @@ public class RpgPlayer {
 	    statMap.put(t, new Stat(conf, t, "player.stats"));
 
 	this.stats = Collections.unmodifiableMap(statMap);
+        this.health = new RpgHealthMeter(this, rpgClass.getConfiguration().getConfigurationSection("class.stats.health"));
+        this.health.setValue(conf.getInt("player.health", health.getMaxValue()));
     }
 
     public String getName() {
@@ -138,5 +142,31 @@ public class RpgPlayer {
 	}
 
 	return null;
+    }
+
+    public RpgPlayer damage(int amount) {
+        health.damage(amount);
+
+        return this;
+    }
+
+    public RpgPlayer heal(int amount) {
+        health.heal(amount);
+
+        return this;
+    }
+
+    public RpgPlayer setHealth(int value) {
+        health.setValue(value);
+
+        return this;
+    }
+
+    public int getHealth() {
+        return health.getValue();
+    }
+
+    public int getMaxHealth() {
+        return health.getMaxValue();
     }
 }
