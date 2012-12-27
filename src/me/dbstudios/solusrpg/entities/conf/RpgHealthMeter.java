@@ -19,6 +19,9 @@ public class RpgHealthMeter extends RpgMeter {
 
     public void damage(int amount) {
         super.remove(amount);
-        
+    }
+
+    public void heal(int amount) {
+        super.add(amount);
     }
 }
