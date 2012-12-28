@@ -3,6 +3,6 @@
 {bold}{aqua}Account Name: {reset}{green}{name}
 {bold}{aqua}Class: {reset}{green}{class}
 {bold}{aqua}Level: {reset}{green}{level}
-#{bold}{aqua}Experience: {reset}{green}{experience} {aqua}/ {green}{experience-threshold}
+#{bold}{aqua}Experience: {reset}{green}{experience} {aqua}/ {green}{experience-threshold}  -- Not implemented
 {bold}{aqua}{health-name}: {reset}{red}{health} {aqua}/ {red}{max-health}
-#{bold}{aqua}{energy-name}: {reset}{dark_aqua}{energy} {aqua}/ {dark_aqua}{max-energy}
+#{bold}{aqua}{energy-name}: {reset}{dark_aqua}{energy} {aqua}/ {dark_aqua}{max-energy}     -- Not implemented
