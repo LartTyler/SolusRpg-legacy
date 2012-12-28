@@ -1,5 +1,5 @@
 {aqua}Class: {green}{name}
-----------------------------------------
+{green}----------------------------------------
 {bold}{aqua}Bio: {reset}{green}{bio}
 {bold}{aqua}Max health: {reset}{red}{vitality}
 {bold}{aqua}Can use: {reset}{green}{can-use}
