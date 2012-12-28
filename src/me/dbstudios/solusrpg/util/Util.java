@@ -82,8 +82,9 @@ public class Util {
     }
 
     public static void sendMessage(CommandSender sender, String msg, Map<String, String> args) {
-        for (String arg : args.values())
-            msg = msg.replaceAll("(?i)\\{" + arg + "\\}", arg);
+        if (args != null)
+            for (String arg : args.values())
+                msg = msg.replaceAll("(?i)\\{" + arg + "\\}", arg);
 
         for (ChatColor c : ChatColor.values())
             msg = msg.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
