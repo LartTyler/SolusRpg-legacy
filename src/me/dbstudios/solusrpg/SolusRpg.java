@@ -27,6 +27,16 @@ public class SolusRpg extends JavaPlugin {
         if (!f.exists())
             Util.extract("/resources/config.yml", f);
 
+        f = new File(Directories.CONFIG + "player_info_format.dat");
+
+        if (!f.exists())
+            Util.extract("/resources/player_info_format.dat", f);
+
+        f = new File(Directories.CONFIG + "class_info_format.dat");
+
+        if (!f.exists())
+            Util.extract("/resources/class_info_format.dat", f);
+
         SolusRpg.instance = this;
 
 	SolusRpg.log(Level.INFO, "Loaded {0} class{1}.", ClassManager.size(), ClassManager.size() != 1 ? "es" : "");

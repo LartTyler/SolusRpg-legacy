@@ -4,10 +4,13 @@ package me.dbstudios.solusrpg.util;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import me.dbstudios.solusrpg.SolusRpg;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.SpoutWorld;
@@ -76,5 +79,15 @@ public class Util {
         }
 
         return name;
+    }
+
+    public static void sendMessage(CommandSender sender, String msg, Map<String, String> args) {
+        for (String arg : args.values())
+            msg = msg.replaceAll("(?i)\\{" + arg + "\\}", arg);
+
+        for (ChatColor c : ChatColor.values())
+            msg = msg.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
+
+        sender.sendMessage(sender instanceof Player ? msg : ChatColor.stripColor(msg));
     }
 }

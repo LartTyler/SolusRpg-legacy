@@ -169,4 +169,12 @@ public class RpgPlayer {
     public int getMaxHealth() {
         return health.getMaxValue();
     }
+
+    public RpgHealthMeter getHealthMeter() {
+        return this.health;
+    }
+
+    public int getLevel() {
+        return basePlayer.getLevel();
+    }
 }

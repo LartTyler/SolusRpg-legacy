@@ -5,11 +5,20 @@
 
 package me.dbstudios.solusrpg.commands;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.logging.Level;
+import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
+import me.dbstudios.solusrpg.util.Directories;
+import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,7 +35,23 @@ public class RpgInfoCommand {
         if (!potentialMatches.isEmpty()) {
             RpgPlayer target = PlayerManager.get(potentialMatches.get(0));
 
-            // TODO: Display player stats
+            try {
+                Scanner s = new Scanner(new File(Directories.CONFIG + "player_info_format.dat"));
+
+                Map<String, String> arguments = new HashMap<>();
+
+                arguments.put("display-name", target.getDisplayName());
+                arguments.put("name", target.getName());
+                arguments.put("class", target.getRpgClass().getName());
+                arguments.put("health-name", target.getHealthMeter().getMeterName());
+                arguments.put("health", target.getHealth() + "");
+                arguments.put("max-health", target.getMaxHealth() + "");
+
+                while (s.hasNextLine())
+                    Util.sendMessage(sender, s.nextLine(), arguments);
+            } catch (FileNotFoundException e) {
+                SolusRpg.log(Level.WARNING, "Could not locate file: " + Directories.CONFIG + "player_info_format.dat");
+            }
         } else {
             List<RpgClass> potentialClasses = ClassManager.matchClass(args[1]);
 
