@@ -53,6 +53,7 @@ public class RpgInfoCommand {
                     Util.sendMessage(sender, s.nextLine(), arguments);
             } catch (FileNotFoundException e) {
                 SolusRpg.log(Level.WARNING, "Could not locate file: " + Directories.CONFIG + "player_info_format.dat");
+                Util.sendMessage(sender, "{red}An error occurred while attempting to execute your command.", null);
             }
         } else {
             List<RpgClass> potentialClasses = ClassManager.matchClass(args[1]);
@@ -88,6 +89,6 @@ public class RpgInfoCommand {
             }
         }
 
-	return false;
+	return true;
     }
 }
