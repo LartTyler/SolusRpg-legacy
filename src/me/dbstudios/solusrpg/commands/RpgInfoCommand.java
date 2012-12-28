@@ -14,7 +14,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
+import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
+import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.Directories;
@@ -58,7 +60,31 @@ public class RpgInfoCommand {
             if (!potentialClasses.isEmpty()) {
                 RpgClass target = potentialClasses.get(0);
 
-                // TODO: Display class stats
+                try {
+                    Scanner s = new Scanner(new File(Directories.CONFIG + "player_info_format.dat"));
+
+                    Map<String, String> arguments = new HashMap<>();
+
+                    arguments.put("name", target.getName());
+                    arguments.put("bio", target.getBio());
+
+                    for (PermitNode n : PermitNode.values()) {
+                        String list = "";
+
+                        for (String el : Util.toTypedList(target.getConfiguration().getList("class." + n, null), String.class))
+                            list += ", " + (el.charAt(0) == '@' ? el.substring(1) : el);
+
+                        arguments.put(n.getNode(), list.substring(2));
+                    }
+
+                    for (StatType t : StatType.values())
+                        arguments.put(t.name(), target.getStat(t).getValue() + "");
+
+                    while (s.hasNextLine())
+                        Util.sendMessage(sender, s.nextLine(), arguments);
+                } catch (FileNotFoundException e) {
+                    SolusRpg.log(Level.WARNING, "Could not locate file: " + Directories.CONFIG + "class_info_format.dat");
+                }
             }
         }
 
