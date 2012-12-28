@@ -1,7 +1,7 @@
 {aqua}Class: {green}{name}
 ----------------------------------------
 {bold}{aqua}Bio: {reset}{green}{bio}
-{bold}{aqua}Max health: {reset}{red}{max-health}
+{bold}{aqua}Max health: {reset}{red}{vitality}
 {bold}{aqua}Can use: {reset}{green}{can-use}
 {bold}{aqua}Can place: {reset}{green}{can-place}
 {bold}{aqua}Can break: {reset}{green}{can-break}
