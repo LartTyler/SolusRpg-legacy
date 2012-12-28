@@ -18,9 +18,11 @@ public enum PermitNode {
     USE("can-use", "Can use");
 
     private final String path;
+    private final String node;
     private final String text;
 
     private PermitNode(String path, String text) {
+        this.node = path;
         this.path = "permit-nodes." + path;
         this.text = text;
     }
@@ -31,5 +33,9 @@ public enum PermitNode {
 
     public String getText() {
         return this.text;
+    }
+
+    public String getNode() {
+        return this.node;
     }
 }
