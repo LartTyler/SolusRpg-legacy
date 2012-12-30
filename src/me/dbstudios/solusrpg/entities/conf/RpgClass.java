@@ -20,6 +20,7 @@ public class RpgClass {
     private final String systemName;
     private final String name;
     private final String bio;
+    private final boolean privateClass;
 
     public RpgClass(String systemName) throws RpgClassConfigException {
         File f = new File(Directories.CLASSES + systemName + ".yml");
@@ -40,8 +41,8 @@ public class RpgClass {
             List<Pattern> patterns = new ArrayList<>();
 
             for (String item : Util.toTypedList(conf.getList("class." + node, null), String.class))
-                if (item.charAt(0) == RpgConstants.ITEM_GROUP_IDENTIFIER && ItemGroups.groupExists(item.substring(1)))
-                    patterns.addAll(ItemGroups.getGroup(item.substring(1)));
+                if (item.charAt(0) == RpgConstants.ITEM_GROUP_IDENTIFIER && ItemGroups.groupExists(item.substring(1).toLowerCase()))
+                    patterns.addAll(ItemGroups.getGroup(item.substring(1).toLowerCase()));
                 else
                     patterns.add(Pattern.compile(item));
 
@@ -56,6 +57,7 @@ public class RpgClass {
 	    statMap.put(t, new Stat(conf, t, "class.stats"));
 
 	this.stats = Collections.unmodifiableMap(statMap);
+        this.privateClass = conf.getBoolean("class.private", false);
     }
 
     public String getSystemName() {
@@ -84,5 +86,9 @@ public class RpgClass {
 
     public FileConfiguration getConfiguration() {
         return YamlConfiguration.loadConfiguration(new File(Directories.CLASSES + this.systemName + ".yml"));
+    }
+
+    public boolean isPrivate() {
+        return this.privateClass;
     }
 }
