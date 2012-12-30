@@ -37,7 +37,7 @@ public class RpgInfoCommand {
 
         if (!potentialMatches.isEmpty()) {
             if (!PermissionManager.hasPermission(sender, "dbstudios.solusrpg.info.player", false)) {
-                Util.sendMessage(sender, "{dark_red}Error: {aqua}You do not have sufficient permissions to perform this command.", null);
+                Util.sendMessage(sender, "{dark_red}Error: {aqua}You do not have sufficient permissions to perform this command.");
             } else {
                 RpgPlayer target = PlayerManager.get(potentialMatches.get(0));
 
@@ -67,7 +67,7 @@ public class RpgInfoCommand {
             }
         } else {
             if (!PermissionManager.hasPermission(sender, "dbstudios.solusrpg.info.class", true)) {
-                Util.sendMessage(sender, "{dark_red}Error: {aqua}You do not have sufficient permissions to perform this command.", null);
+                Util.sendMessage(sender, "{dark_red}Error: {aqua}You do not have sufficient permissions to perform this command.");
             } else {
                 List<RpgClass> potentialClasses = ClassManager.matchClass(args[1]);
 
@@ -111,7 +111,7 @@ public class RpgInfoCommand {
                         SolusRpg.log(Level.WARNING, "Could not locate file: " + Directories.CONFIG + "class_info_format.dat");
                     }
                 } else {
-                    Util.sendMessage(sender, "{aqua}Could not find any class or player matching '{green}" + args[1] + "'{aqua}.", null);
+                    Util.sendMessage(sender, "{aqua}Could not find any class or player matching '{green}" + args[1] + "'{aqua}.");
                 }
             }
         }
