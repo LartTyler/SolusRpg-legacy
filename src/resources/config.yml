@@ -14,9 +14,11 @@ config:
     - Classless
   defaults:
     stats:
-      strength: 1
-      magic: 0
-      armor: 0
-      aura: 0
+      strength: 5
+      magic: 5
+      armor: 2
+      aura: 1
       vitality: 50
       precision: 5
+      health:
+        name: Health

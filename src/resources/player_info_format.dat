@@ -1,5 +1,5 @@
 {aqua}Player: {green}{display-name}
-----------------------------------------
+{green}----------------------------------------
 {bold}{aqua}Account Name: {reset}{green}{name}
 {bold}{aqua}Class: {reset}{green}{class}
 {bold}{aqua}Level: {reset}{green}{level}
