@@ -4,10 +4,14 @@ package me.dbstudios.solusrpg;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.dbstudios.solusrpg.commands.RpgCommandExecutor;
+import me.dbstudios.solusrpg.event.listeners.EventDistributor;
+import me.dbstudios.solusrpg.event.listeners.RpgStockListener;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -37,7 +41,15 @@ public class SolusRpg extends JavaPlugin {
         if (!f.exists())
             Util.extract("/resources/class_info_format.dat", f);
 
-        SolusRpg.instance = this;
+        f = new File(Directories.CONFIG + "class_list_format.dat");
+
+        if (!f.exists())
+            Util.extract("/resources/class_list_format.dat", f);
+
+        Bukkit.getPluginManager().registerEvents(new EventDistributor(), this);
+        Bukkit.getPluginManager().registerEvents(new RpgStockListener(), this);
+
+        Bukkit.getPluginCommand("rpg").setExecutor(new RpgCommandExecutor());
 
 	SolusRpg.log(Level.INFO, "Loaded {0} class{1}.", ClassManager.size(), ClassManager.size() != 1 ? "es" : "");
 	SolusRpg.log(Level.INFO, "Loaded {0} phrase{1}.", PhraseManager.size(), PhraseManager.size() != 1 ? "s" : "");
