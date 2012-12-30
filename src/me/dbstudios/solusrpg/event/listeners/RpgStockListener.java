@@ -7,6 +7,8 @@ package me.dbstudios.solusrpg.event.listeners;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.StatType;
@@ -83,7 +85,7 @@ public class RpgStockListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerDamageEntity(RpgPlayerDamageEntityEvent ev) {
-	RpgPlayer player = ev.getPlayer();
+        RpgPlayer player = ev.getPlayer();
 
 	if (!player.isAllowed(PermitNode.USE, ev.getWeapon())) {
 	    ev.setCancelled(true);
@@ -212,6 +214,28 @@ public class RpgStockListener implements Listener {
                 break;
             case MAGICAL:
                 damage -= player.getStat(StatType.MAGIC).getValue();
+
+                break;
+        }
+
+        if (damage > 0)
+            ev.setDamage(Math.max(0, damage));
+        else
+            ev.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onRpgPlayerDamage(RpgPlayerDamageEvent ev) {
+        RpgPlayer player = ev.getPlayer();
+        int damage = ev.getDamage();
+
+        switch (ev.getDamageType()) {
+            case PHYSICAL:
+                damage -= player.getStat(StatType.ARMOR).getValue();
+
+                break;
+            case MAGICAL:
+                damage -= player.getStat(StatType.AURA).getValue();
 
                 break;
         }

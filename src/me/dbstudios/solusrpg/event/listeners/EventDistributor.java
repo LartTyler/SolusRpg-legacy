@@ -5,6 +5,8 @@
 
 package me.dbstudios.solusrpg.event.listeners;
 
+import java.util.logging.Level;
+import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
@@ -20,10 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
 
 /**
@@ -128,9 +127,17 @@ public class EventDistributor implements Listener {
 
             player.setHealth(player.getHealth() - ev.getDamage());
 
-            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
+            int trueHealth = (int)Math.ceil(20.0 * ((double)player.getHealth() / (double)player.getMaxHealth()));
 
             ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+
+            // If we reach this point, damage should be dealt to the RpgPlayer. However, this does not always mean that the player's true health
+            // will change. If it does not (i.e. the end damage is set to zero), then the damage animation will not player. The block below will increase the
+            // players health by 1, then set the final event damage to 1, forcing the damage animation to play, but not causing any change in the player's true health.
+            if (ev.getDamage() == 0 && trueHealth != 20) {
+                player.getBasePlayer().setHealth(player.getBasePlayer().getHealth() + 1);
+                ev.setDamage(1);
+            }
         }
     }
 
@@ -153,9 +160,44 @@ public class EventDistributor implements Listener {
 
             player.setHealth(player.getHealth() - ev.getDamage());
 
-            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
+            int trueHealth = (int)Math.ceil(20.0 * ((double)player.getHealth() / (double)player.getMaxHealth()));
 
             ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+
+            if (ev.getDamage() == 0 && trueHealth != 20) {
+                player.getBasePlayer().setHealth(player.getBasePlayer().getHealth() + 1);
+                ev.setDamage(1);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onEntityDamageEvent(EntityDamageEvent ev) {
+        if (ev.getEntity() instanceof Player) {
+            RpgPlayerDamageEvent event = new RpgPlayerDamageEvent((Player)ev.getEntity(), ev.getCause(), ev.getDamage(), DamageType.TRUE);
+
+            Bukkit.getPluginManager().callEvent(event);
+
+            ev.setCancelled(event.isCancelled());
+            ev.setDamage(event.getDamage());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void postEntityDamageEvent(EntityDamageEvent ev) {
+        if (!ev.isCancelled() && ev.getDamage() > 0 && ev.getEntity() instanceof Player) {
+            RpgPlayer player = PlayerManager.get((Player)ev.getEntity());
+
+            player.setHealth(player.getHealth() - ev.getDamage());
+
+            int trueHealth = (int)Math.ceil(20.0 * ((double)player.getHealth() / (double)player.getMaxHealth()));
+
+            ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+
+            if (ev.getDamage() == 0 && trueHealth != 20) {
+                player.getBasePlayer().setHealth(player.getBasePlayer().getHealth() + 1);
+                ev.setDamage(1);
+            }
         }
     }
 
@@ -178,9 +220,9 @@ public class EventDistributor implements Listener {
 
             player.setHealth(player.getHealth() + ev.getAmount());
 
-            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
+            int trueHealth = (int)Math.floor(20.0 * ((double)player.getHealth() / (double)player.getMaxHealth()));
 
-            ev.setAmount(trueHealth - player.getBasePlayer().getHealth());
+            ev.setAmount(Math.max(trueHealth - player.getBasePlayer().getHealth(), 0));
         }
     }
 
@@ -195,7 +237,7 @@ public class EventDistributor implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteractEvent(PlayerInteractEvent ev) {
-        if (ev.getAction() == Action.RIGHT_CLICK_AIR || ev.getAction() == Action.LEFT_CLICK_AIR)
+        if (ev.getAction() != Action.LEFT_CLICK_BLOCK)
             return;
 
 	RpgPlayerInteractEvent event = new RpgPlayerInteractEvent(ev.getPlayer(), ev.getAction(), ev.getItem(), ev.getClickedBlock(), ev.getBlockFace());
