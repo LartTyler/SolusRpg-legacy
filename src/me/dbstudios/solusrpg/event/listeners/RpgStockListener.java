@@ -38,8 +38,9 @@ public class RpgStockListener implements Listener {
 	    ev.setCancelled(true);
 
 	    Map<String, String> args = new HashMap<>();
+            String item = ev.getBlockName().toLowerCase();
 
-	    args.put("item", ev.getBlockName().replace('_', ' ').toLowerCase());
+	    args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n " : " ")) + item.replace('_', ' '));
 
 	    if (PhraseManager.phraseExists("player.break-deny"))
 		player.sendEventMessage(PhraseManager.getPhrase("player.break-deny"), args);
@@ -54,8 +55,9 @@ public class RpgStockListener implements Listener {
 	    ev.setCancelled(true);
 
 	    Map<String, String> args = new HashMap<>();
+            String item = ev.getBlockName().toLowerCase();
 
-	    args.put("item", ev.getBlockName().replace('_', ' ').toLowerCase());
+	    args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n " : " ")) + item.replace('_', ' '));
 
 	    if (PhraseManager.phraseExists("player.place-deny"))
 		player.sendEventMessage(PhraseManager.getPhrase("player.place-deny"), args);
@@ -70,8 +72,9 @@ public class RpgStockListener implements Listener {
 	    ev.setCancelled(true);
 
 	    Map<String, String> args = new HashMap<>();
+            String item = ev.getItemName().toLowerCase();
 
-	    args.put("item", ev.getItemName().replace('_', ' ').toLowerCase());
+	    args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n " : " ")) + item.replace('_', ' '));
 
 	    if (PhraseManager.phraseExists("player.use-deny"))
 		player.sendEventMessage(PhraseManager.getPhrase("player.use-deny"), args);
@@ -87,8 +90,9 @@ public class RpgStockListener implements Listener {
 
 	    if (PhraseManager.phraseExists("player.use-deny")) {
 		Map<String, String> args = new HashMap<>();
+                String item = ev.getWeapon().toLowerCase();
 
-		args.put("item", ev.getWeapon().replace('_', ' ').toLowerCase());
+                args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n " : " ")) + item.replace('_', ' '));
 
 		player.sendEventMessage(PhraseManager.getPhrase("player.use-deny"), args);
 	    }
@@ -135,8 +139,9 @@ public class RpgStockListener implements Listener {
 
             if (PhraseManager.phraseExists("player.use-deny")) {
                 Map<String, String> args = new HashMap<>();
+                String item = ev.getWeapon().toLowerCase();
 
-                args.put("item", ev.getWeapon().replace('_', ' ').toLowerCase());
+                args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n" : "")) + ' ' + item.replace('_', ' '));
 
                 damager.sendMessage(PhraseManager.getPhrase("player.use-deny"), args);
             }
@@ -215,5 +220,10 @@ public class RpgStockListener implements Listener {
             ev.setDamage(Math.max(0, damage));
         else
             ev.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onRpgPlayerSpawn(RpgPlayerSpawnEvent ev) {
+        ev.getPlayer().setHealth(ev.getPlayer().getMaxHealth());
     }
 }
