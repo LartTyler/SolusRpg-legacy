@@ -2,11 +2,7 @@
 package me.dbstudios.solusrpg.managers;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
@@ -67,6 +63,10 @@ public class ClassManager {
 
     public static RpgClass getClass(String cl) {
         return classes.get(cl);
+    }
+
+    public static Collection<RpgClass> getClasses() {
+        return classes.values();
     }
 
     public static int size() {

@@ -4,6 +4,7 @@
  */
 package me.dbstudios.solusrpg.managers;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -60,5 +61,9 @@ public class PlayerManager {
 
     public static int size() {
 	return players.size();
+    }
+
+    public static Collection<RpgPlayer> getOnlinePlayers() {
+        return players.values();
     }
 }
