@@ -17,6 +17,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
@@ -194,6 +195,9 @@ public class EventDistributor implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteractEvent(PlayerInteractEvent ev) {
+        if (ev.getAction() == Action.RIGHT_CLICK_AIR || ev.getAction() == Action.LEFT_CLICK_AIR)
+            return;
+
 	RpgPlayerInteractEvent event = new RpgPlayerInteractEvent(ev.getPlayer(), ev.getAction(), ev.getItem(), ev.getClickedBlock(), ev.getBlockFace());
 
 	Bukkit.getPluginManager().callEvent(event);
