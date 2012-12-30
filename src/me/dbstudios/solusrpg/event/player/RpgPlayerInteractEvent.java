@@ -90,6 +90,14 @@ public class RpgPlayerInteractEvent extends RpgPlayerEvent implements Cancellabl
 
     public void setCancelled(boolean cancelled) {
 	this.cancelled = cancelled;
+
+        if (cancelled) {
+            this.useBlock = Result.DENY;
+            this.useItem = Result.DENY;
+        } else {
+            this.useBlock = Result.DEFAULT;
+            this.useItem = Result.DEFAULT;
+        }
     }
 
     public void setUseBlock(Result useBlock) {
