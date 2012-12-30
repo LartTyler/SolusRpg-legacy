@@ -15,6 +15,7 @@ public enum PermitNode {
     CRAFT("can-craft", "Can craft"),
     PLACE("can-place", "Can place"),
     SMELT("can-smelt", "Can smelt"),
+    WEAR("can-wear", "Can wear"),
     USE("can-use", "Can use");
 
     private final String path;
