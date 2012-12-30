@@ -54,6 +54,7 @@ public class PlayerManager {
     }
 
     public static void remove(Player player) {
+        PlayerManager.get(player).save();
 	PlayerManager.remove(player.getUniqueId());
     }
 
