@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.logging.Level;
+import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
 import me.dbstudios.solusrpg.entities.conf.RpgHealthMeter;
@@ -39,7 +41,7 @@ public class RpgPlayer {
 	File f = new File(Directories.DATA + p.getName().substring(0, 2).toLowerCase() + File.separator + p.getName().toLowerCase() + ".yml");
 
 	if (!f.exists()) {
-	    (new File(f.getPath().substring(0, f.getPath().lastIndexOf(File.separator)))).mkdirs();
+	    (new File(Directories.DATA + p.getName().substring(0, 2).toLowerCase() + File.separator)).mkdirs();
 
 	    try {
 		f.createNewFile();
@@ -62,7 +64,7 @@ public class RpgPlayer {
 	    statMap.put(t, new Stat(conf, t, "player.stats"));
 
 	this.stats = Collections.unmodifiableMap(statMap);
-        this.health = new RpgHealthMeter(this, rpgClass.getConfiguration().getConfigurationSection("class.stats.health"));
+        this.health = new RpgHealthMeter(this, rpgClass.getConfiguration());
         this.health.setValue(conf.getInt("player.health", health.getMaxValue()));
     }
 
@@ -176,5 +178,33 @@ public class RpgPlayer {
 
     public int getLevel() {
         return basePlayer.getLevel();
+    }
+
+    public void save() {
+        File f = new File(Directories.DATA + basePlayer.getName().substring(0, 2).toLowerCase() + File.separator + basePlayer.getName().toLowerCase() + ".yml");
+
+	if (!f.exists()) {
+	    (new File(Directories.DATA + basePlayer.getName().substring(0, 2).toLowerCase() + File.separator)).mkdirs();
+
+	    try {
+		f.createNewFile();
+	    } catch (IOException e) {
+		SolusRpg.log(Level.SEVERE, "Could not save player data for {0}.", this.getName());
+	    }
+	}
+
+	FileConfiguration conf = YamlConfiguration.loadConfiguration(f);
+
+        conf.set("player.class", rpgClass.getSystemName());
+        conf.set("player.health", health.getValue());
+
+        for (StatType t : StatType.values())
+            conf.set("player.stats." + t, stats.get(t).getValue());
+
+        try {
+            conf.save(f);
+        } catch (IOException e) {
+            SolusRpg.log(Level.SEVERE, "Could not save player data for {0}.", this.getName());
+        }
     }
 }
