@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -45,6 +46,17 @@ public class Util {
     public static String getItemName(Material type, byte data) {
 	String[] items = RpgConstants.ITEM_NAME_MAP.get(type);
 
+        switch (type) {
+            case LEAVES:
+                if (data >= 8)
+                    data -= 8;
+
+                if (data >= 4)
+                    data -= 4;
+
+            break;
+        }
+
         if (items != null)
             if (data < items.length)
                 return items[data];
@@ -83,12 +95,32 @@ public class Util {
 
     public static void sendMessage(CommandSender sender, String msg, Map<String, String> args) {
         if (args != null)
-            for (String arg : args.values())
-                msg = msg.replaceAll("(?i)\\{" + arg + "\\}", arg);
+            for (String key : args.keySet())
+                msg = msg.replaceAll("(?i)\\{" + key + "\\}", args.get(key));
 
         for (ChatColor c : ChatColor.values())
             msg = msg.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
 
         sender.sendMessage(sender instanceof Player ? msg : ChatColor.stripColor(msg));
+    }
+
+    public static boolean isUncountable(String str) {
+        if (str.endsWith("s"))
+            return true;
+
+        for (String s : RpgConstants.UNCOUNTABLE_MATERIALS)
+            if (Pattern.matches("(?i)^" + s + "$", str))
+                return true;
+
+        return false;
+    }
+
+    public static boolean isVowel(char c) {
+        c = Character.toLowerCase(c);
+
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')
+            return true;
+
+        return false;
     }
 }
