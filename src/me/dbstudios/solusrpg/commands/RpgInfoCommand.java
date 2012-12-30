@@ -52,6 +52,7 @@ public class RpgInfoCommand {
                     arguments.put("health-name", target.getHealthMeter().getMeterName());
                     arguments.put("health", target.getHealth() + "");
                     arguments.put("max-health", target.getMaxHealth() + "");
+                    arguments.put("level", target.getLevel() + "");
 
                     while (s.hasNextLine()) {
                         String[] lineSplit = s.nextLine().split("[^\\\\]#");
