@@ -5,7 +5,7 @@
 package me.dbstudios.solusrpg.entities.conf;
 
 import me.dbstudios.solusrpg.entities.RpgPlayer;
-import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
@@ -19,10 +19,10 @@ public abstract class RpgMeter implements Meter<RpgPlayer, Integer> {
 
     private int value;
 
-    public RpgMeter(RpgPlayer owner, ConfigurationSection meterNode) {
+    public RpgMeter(RpgPlayer owner, FileConfiguration conf) {
        this.owner = owner;
-       this.name = meterNode.getString("name", "Unnamed Meter");
-       this.max = meterNode.getInt("max", 0);
+       this.name = conf.getString("class.stats.health.name", "Unnamed Meter");
+       this.max = conf.getInt("class.stats.vitality", 20);
     }
 
     public Integer getValue() {

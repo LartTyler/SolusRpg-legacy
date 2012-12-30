@@ -5,7 +5,7 @@
 package me.dbstudios.solusrpg.entities.conf;
 
 import me.dbstudios.solusrpg.entities.RpgPlayer;
-import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  *
@@ -13,8 +13,8 @@ import org.bukkit.configuration.ConfigurationSection;
  * tyler
  */
 public class RpgHealthMeter extends RpgMeter {
-    public RpgHealthMeter(RpgPlayer owner, ConfigurationSection meterNode) {
-        super(owner, meterNode);
+    public RpgHealthMeter(RpgPlayer owner, FileConfiguration conf) {
+        super(owner, conf);
     }
 
     public void damage(int amount) {
