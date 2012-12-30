@@ -48,6 +48,10 @@ public class Util {
 
         switch (type) {
             case LEAVES:
+                if (data >= 12)
+                    data -= 12;
+
+            case LOG:
                 if (data >= 8)
                     data -= 8;
 
@@ -58,7 +62,7 @@ public class Util {
         }
 
         if (items != null)
-            if (data < items.length)
+            if (data < items.length && data >= 0)
                 return items[data];
 
         return type.name();
@@ -93,6 +97,10 @@ public class Util {
         return name;
     }
 
+    public static void sendMessage(CommandSender sender, String msg) {
+        Util.sendMessage(sender, msg, null);
+    }
+
     public static void sendMessage(CommandSender sender, String msg, Map<String, String> args) {
         if (args != null)
             for (String key : args.keySet())
@@ -100,6 +108,8 @@ public class Util {
 
         for (ChatColor c : ChatColor.values())
             msg = msg.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
+
+//        msg = OutputFormatter.format(msg, args);
 
         sender.sendMessage(sender instanceof Player ? msg : ChatColor.stripColor(msg));
     }
