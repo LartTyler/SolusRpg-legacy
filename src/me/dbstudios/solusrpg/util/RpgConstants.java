@@ -12,6 +12,63 @@ import org.bukkit.Material;
 public class RpgConstants {
     public static final char ITEM_GROUP_IDENTIFIER = '@';
     public static final Map<Material, String[]> ITEM_NAME_MAP;
+    public static final String[] UNCOUNTABLE_MATERIALS = {
+        "AIR",
+        "BEDROCK",
+        "BREAD",
+        "CLAY",
+        "COAL",
+        "COAL_ORE",
+        "COBBLESTONE",
+        "COOKED_BEEF",
+        "DIAMOND_ORE",
+        "DIRT",
+        "FIRE",
+        "FLINT",
+        "FLINT_AND_STEEL",
+        "GLOWSTONE DUST",
+        "GOLD_LEGGINGS",
+        "GOLD_ORE",
+        "GRAVEL",
+        "GRILLED_PORK",
+        "ICE",
+        "*._DYE",
+        "BONE_MEAL",
+        "IRON_ORE",
+        "LAPIS_ORE",
+        "LAVA",
+        "LEATHER",
+        "MAGMA_CREAM",
+        "MOSSY_COBBLESTONE",
+        "MUSHROOM_SOUP",
+        "MYCEL",
+        "NETHER_BRICK",
+        "NETHER_BRICK_STAIRS",
+        "NETHERRACK",
+        "OBSIDIAN",
+        "PAPER",
+        "PORK",
+        "RAW_BEEF",
+        "REDSTONE",
+        "REDSTONE_ORE",
+        "ROTTEN_FLESH",
+        "SAND",
+        "SANDSTONE",
+        "SNOW",
+        "SOIL",
+        "SOUL_SAND",
+        "STATIONARY_LAVA",
+        "STATIONARY_WATER",
+        "STONE",
+        "SUGAR",
+        "SUGAR_CANE",
+        "SULPHUR",
+        "TNT",
+        "WATER",
+        "WHEAT",
+        "WOOD",
+        ".*_WOOL"
+    };
 
     static {
 	Map<Material, String[]> nameMap = new EnumMap<>(Material.class);
@@ -70,7 +127,7 @@ public class RpgConstants {
             "BLACK_WOOL"
         });
 
-        nameMap.put(Material.GRASS, new String[] {
+        nameMap.put(Material.LONG_GRASS, new String[] {
             "DEAD_SHRUB",
             "TALL_GRASS",
             "FERN"
@@ -88,6 +145,20 @@ public class RpgConstants {
             "PINE_SAPLINE",
             "BIRCH_SAPLING",
             "JUNGLE_SAPLING"
+        });
+
+        nameMap.put(Material.WOOD, new String[] {
+            "OAK_WOOD",
+            "PINE_WOOD",
+            "BIRCH_WOOD",
+            "JUNGLE_WOOD"
+        });
+
+        nameMap.put(Material.LOG, new String[] {
+            "OAK_LOG",
+            "PINE_LOG",
+            "BIRCH_LOG",
+            "JUNGLE_LOG"
         });
 
         nameMap.put(Material.DOUBLE_STEP, new String[] {
