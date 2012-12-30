@@ -36,10 +36,10 @@ public class RpgPlayerInteractEvent extends RpgPlayerEvent implements Cancellabl
     public RpgPlayerInteractEvent(Player player, Action action, ItemStack item, Block block, BlockFace face) {
 	super(player);
 
-	this.itemName = Util.getItemName(item.getType(), item.getData().getData());
+	this.itemName = item != null ? Util.getItemName(item.getType(), item.getData().getData()) : Util.getItemName(org.bukkit.Material.AIR, (byte)0);
 	this.blockName = Util.getItemName(block.getType(), block.getData());
 	this.action = action;
-	this.item = new SpoutItemStack(item);
+	this.item = item != null ? new SpoutItemStack(item) : null;
 	this.block = Util.toSpoutBlock(block);
 	this.face = face;
     }
