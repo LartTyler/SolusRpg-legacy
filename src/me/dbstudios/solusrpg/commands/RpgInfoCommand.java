@@ -18,6 +18,7 @@ import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
 import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.managers.ClassManager;
+import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PermissionManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.Directories;
@@ -53,6 +54,8 @@ public class RpgInfoCommand {
                     arguments.put("health", target.getHealth() + "");
                     arguments.put("max-health", target.getMaxHealth() + "");
                     arguments.put("level", target.getLevel() + "");
+                    arguments.put("experience", target.getExp() + "");
+                    arguments.put("experience-to-level", LevelManager.getExpToLevel(target.getLevel() + 1) + "");
 
                     while (s.hasNextLine()) {
                         String[] lineSplit = s.nextLine().split("[^\\\\]#");
