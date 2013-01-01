@@ -12,6 +12,7 @@ import me.dbstudios.solusrpg.event.listeners.RpgStockListener;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
+import me.dbstudios.solusrpg.managers.SpecializationManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.OutputFormatter;
 import me.dbstudios.solusrpg.util.SimpleFormatter;
@@ -56,6 +57,11 @@ public class SolusRpg extends JavaPlugin {
         if (!f.exists())
             Util.extract("/resources/class_list_format.dat", f);
 
+        f = new File(Directories.CONFIG + "specializations.yml");
+
+        if (!f.exists())
+            Util.extract("/resources/specializations.yml", f);
+
         OutputFormatter.registerFormatter(new SimpleFormatter());
 
         Bukkit.getPluginManager().registerEvents(new EventDistributor(), this);
@@ -66,6 +72,7 @@ public class SolusRpg extends JavaPlugin {
 	SolusRpg.log(Level.INFO, "Loaded {0} class{1}.", ClassManager.size(), ClassManager.size() != 1 ? "es" : "");
 	SolusRpg.log(Level.INFO, "Loaded {0} phrase{1}.", PhraseManager.size(), PhraseManager.size() != 1 ? "s" : "");
         SolusRpg.log(Level.INFO, "Loaded {0} item group{1}.", ItemGroups.size(), ItemGroups.size() != 1 ? "s" : "");
+        SolusRpg.log(Level.INFO, "Loaded {0} specialization{1}.", SpecializationManager.size(), SpecializationManager.size() != 1 ? "s" : "");
 	SolusRpg.log(Level.INFO, "SolusRpg enabled in {0} milliseconds.", System.currentTimeMillis() - start);
     }
 
@@ -73,7 +80,7 @@ public class SolusRpg extends JavaPlugin {
         if (PlayerManager.size() > 0) {
             SolusRpg.log(Level.WARNING, "{0} player{1} {2} still connected when the shutdown command was given, and will be saved before shut down can continue.", PlayerManager.size(), PlayerManager.size() != 1 ? "s" : "",
                     PlayerManager.size() != 1 ? "were" : "was");
-            
+
             for (RpgPlayer p : PlayerManager.getOnlinePlayers())
                 PlayerManager.remove(p.getBasePlayer());
         }

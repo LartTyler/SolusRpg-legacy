@@ -1,0 +1,37 @@
+combat:
+  effects:
+    - stat:
+        strength: 5
+    - stat:
+        strength: 10
+    - stat:
+        strength: 20
+        vitality: 10
+    - stat:
+        strength: 50
+        vitality: 30
+  unique-name: combat
+  icon-path: http://dl.dropbox.com/<userid>/combat.png
+  strength-training:
+    effects:
+      - stat:
+          strength: 5
+      - stat:
+          strength: 15
+      - stat:
+          strength: 30
+    requires:
+      combat: 3
+    unique-name: combat.strength-training
+    icon-path: http://dl.dropbox.com/<userid>/combat/strength-training.png
+  endurance-training:
+    effects:
+      - stat:
+          vitality: 10
+      - stat:
+          vitality: 20
+      - stat:
+          vitality: 40
+    requires:
+      combat: 1
+    icon-path: http://dl.dropbox.com/<userid>/combat/endurance-training.png
