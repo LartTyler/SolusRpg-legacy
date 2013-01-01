@@ -62,6 +62,11 @@ public class SolusRpg extends JavaPlugin {
         if (!f.exists())
             Util.extract("/resources/specializations.yml", f);
 
+        f = new File("plugins" + File.separator + "lib" + File.separator + "beanshell-core.jar");
+
+        if (!f.exists())
+            Util.extract("/resources/lib/beanshell-core.jar", f);
+
         OutputFormatter.registerFormatter(new SimpleFormatter());
 
         Bukkit.getPluginManager().registerEvents(new EventDistributor(), this);
