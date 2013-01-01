@@ -3,6 +3,8 @@ package me.dbstudios.solusrpg.managers;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
+import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.player.specialization.RpgSpecialization;
 import me.dbstudios.solusrpg.player.specialization.Specialization;
 import me.dbstudios.solusrpg.util.Directories;
@@ -26,6 +28,12 @@ public class SpecializationManager {
                 trees.put(key, new RpgSpecialization(conf.getConfigurationSection(key)));
         }
 
+        for (String key : trees.keySet()) {
+            SolusRpg.log(Level.INFO, key);
+
+            printSpecTree(trees.get(key).getSubSpecialization(), 1);
+        }
+
         specTrees = Collections.unmodifiableMap(trees);
     }
 
@@ -47,5 +55,19 @@ public class SpecializationManager {
 
     public static Collection<Specialization> getSpecializationCollection() {
         return specTrees.values();
+    }
+
+    private static void printSpecTree(List<Specialization> specs, int depth) {
+        for (Specialization s : specs) {
+            String out = "";
+
+            for (int i = 0; i < depth; i++)
+                out += "\t";
+
+            SolusRpg.log(Level.INFO, out + s.getUniqueName());
+
+            if (s.hasSubSpecialization())
+                printSpecTree(s.getSubSpecialization(), depth + 1);
+        }
     }
 }

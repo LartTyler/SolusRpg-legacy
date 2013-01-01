@@ -72,7 +72,7 @@ public class SolusRpg extends JavaPlugin {
 	SolusRpg.log(Level.INFO, "Loaded {0} class{1}.", ClassManager.size(), ClassManager.size() != 1 ? "es" : "");
 	SolusRpg.log(Level.INFO, "Loaded {0} phrase{1}.", PhraseManager.size(), PhraseManager.size() != 1 ? "s" : "");
         SolusRpg.log(Level.INFO, "Loaded {0} item group{1}.", ItemGroups.size(), ItemGroups.size() != 1 ? "s" : "");
-        SolusRpg.log(Level.INFO, "Loaded {0} specialization{1}.", SpecializationManager.size(), SpecializationManager.size() != 1 ? "s" : "");
+        SolusRpg.log(Level.INFO, "Loaded {0} specialization tree{1}.", SpecializationManager.size(), SpecializationManager.size() != 1 ? "s" : "");
 	SolusRpg.log(Level.INFO, "SolusRpg enabled in {0} milliseconds.", System.currentTimeMillis() - start);
     }
 

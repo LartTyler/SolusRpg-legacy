@@ -3,6 +3,7 @@ package me.dbstudios.solusrpg.util;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,6 +38,17 @@ public class Util {
                     list.add(type.cast(o));
 
         return list;
+    }
+
+    public static <T, U> Map<T, U> toTypedMap(Map<?, ?> orig, Class<T> keyType, Class<U> valType) {
+        Map<T, U> map = new HashMap<>();
+
+        if (orig != null && !orig.isEmpty())
+            for (Object key : orig.keySet())
+                if (keyType.isInstance(key) && valType.isInstance(orig.get(key)))
+                    map.put(keyType.cast(key), valType.cast(orig.get(key)));
+
+        return map;
     }
 
     public static SpoutBlock toSpoutBlock(Block block) {

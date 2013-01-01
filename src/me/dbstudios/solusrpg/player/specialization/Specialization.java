@@ -2,6 +2,7 @@
 package me.dbstudios.solusrpg.player.specialization;
 
 import java.util.List;
+import java.util.Map;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 
 /**
@@ -15,4 +16,7 @@ public interface Specialization {
     public boolean isRootSpecialization();
     public List<Specialization> getSubSpecialization();
     public Specialization getPreSpecialization();
+    public String getUniqueName();
+    public boolean hasRequiredSpecializations(RpgPlayer player, int level);
+    public Map<String, Integer> getRequiredSpecializations(int level);
 }

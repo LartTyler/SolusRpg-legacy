@@ -21,7 +21,8 @@ combat:
       - stat:
           strength: 30
     requires:
-      combat: 3
+      - specialization:
+          combat: 2
     unique-name: combat.strength-training
     icon-path: http://dl.dropbox.com/<userid>/combat/strength-training.png
   endurance-training:
@@ -33,5 +34,9 @@ combat:
       - stat:
           vitality: 40
     requires:
-      combat: 1
+      - specialization:
+          combat: 1
+      - specialization:
+          combat: 3
+          combat.strength-training: 1
     icon-path: http://dl.dropbox.com/<userid>/combat/endurance-training.png

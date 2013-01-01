@@ -13,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
  * @author Tyler Lartonoix
  */
 public class RpgSpecialization implements Specialization {
+    private final List<Map<String, Integer>> requires;
     private final List<Map<StatType, Stat>> statEffects;
     private final List<Specialization> subSpecs;
     private final Specialization preSpec;
@@ -26,21 +27,34 @@ public class RpgSpecialization implements Specialization {
     public RpgSpecialization(ConfigurationSection conf, Specialization preSpec) {
         this.preSpec = preSpec;
 
-        List<ConfigurationSection> effectsList = Util.toTypedList(conf.getList("effects"), ConfigurationSection.class);
-        List<Map<StatType, Stat>> effects = new ArrayList<>();
+        List<Map<?, ?>> list = conf.getMapList("effects");
+        List<Map<StatType, Stat>> statsList = new ArrayList<>();
 
-        if (!effectsList.isEmpty())
-            for (ConfigurationSection s : effectsList) {
-                Map<StatType, Stat> statMap = new EnumMap<>(StatType.class);
+        if (list != null)
+            for (Map<?, ?> map : list) {
+                if (map.containsKey("stat") && map.get("stat") instanceof Map) {
+                    Map<String, Integer> statMap = Util.toTypedMap((Map)map.get("stat"), String.class, Integer.class);
+                    Map<StatType, Stat> stats = new EnumMap<>(StatType.class);
 
-                for (StatType t : StatType.values())
-                    if (s.getInt("stat." + t, 0) != 0)
-                        statMap.put(t, new Stat(s.getInt("stat." + t), t));
+                    for (StatType t : StatType.values())
+                        if (statMap.containsKey(t.toString()))
+                            stats.put(t, new Stat(statMap.get(t.toString()), t));
 
-                effects.add(Collections.unmodifiableMap(statMap));
+                    statsList.add(stats);
+                }
             }
 
-        this.statEffects = Collections.unmodifiableList(effects);
+        this.statEffects = Collections.unmodifiableList(statsList);
+
+        List<Map<String, Integer>> reqList = new ArrayList<>();
+        list = conf.getMapList("requires");
+
+        if (list != null)
+            for (Map<?, ?> map : list)
+                if (map.containsKey("specialization") && map.get("specialization") instanceof Map)
+                    reqList.add(Util.toTypedMap((Map)map.get("specialization"), String.class, Integer.class));
+
+        this.requires = Collections.unmodifiableList(reqList);
 
         if (conf.isString("unique-name"))
             this.uniqueName = conf.getString("unique-name");
@@ -52,12 +66,14 @@ public class RpgSpecialization implements Specialization {
         conf.set("effects", null);
         conf.set("unique-name", null);
         conf.set("icon-path", null);
+        conf.set("requires", null);
 
         List<Specialization> subs = new ArrayList<>();
 
         if (conf.getKeys(false).size() > 0)
             for (String key : conf.getKeys(false))
-                subs.add(new RpgSpecialization(conf.getConfigurationSection(key), this));
+                if (conf.isConfigurationSection(key))
+                    subs.add(new RpgSpecialization(conf.getConfigurationSection(key), this));
 
         this.subSpecs = Collections.unmodifiableList(subs);
     }
@@ -112,5 +128,31 @@ public class RpgSpecialization implements Specialization {
 
     public Specialization getPreSpecialization() {
         return this.preSpec;
+    }
+
+    public String getUniqueName() {
+        return this.uniqueName;
+    }
+
+    public boolean hasRequiredSpecializations(RpgPlayer player, int level) {
+        if (level >= 0 && level < requires.size()) {
+            Map<String, Integer> preSpecs = requires.get(level);
+            boolean hasSpecs = true;
+
+            for (String spec : preSpecs.keySet())
+                if (player.getMetadataAs(spec, Integer.class) < preSpecs.get(spec))
+                    hasSpecs = false;
+
+            return hasSpecs;
+        }
+
+        return false;
+    }
+
+    public Map<String, Integer> getRequiredSpecializations(int level) {
+        if (level >= 0 && level < requires.size())
+            return requires.get(level);
+
+        return null;
     }
 }
