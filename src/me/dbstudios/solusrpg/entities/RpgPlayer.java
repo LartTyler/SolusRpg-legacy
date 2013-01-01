@@ -3,22 +3,20 @@ package me.dbstudios.solusrpg.entities;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import me.dbstudios.solusrpg.SolusRpg;
-import me.dbstudios.solusrpg.entities.conf.PermitNode;
-import me.dbstudios.solusrpg.entities.conf.RpgClass;
-import me.dbstudios.solusrpg.entities.conf.RpgHealthMeter;
-import me.dbstudios.solusrpg.entities.conf.Stat;
-import me.dbstudios.solusrpg.entities.conf.StatType;
+import me.dbstudios.solusrpg.entities.conf.*;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.util.Directories;
+import me.dbstudios.solusrpg.util.Metadatable;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,10 +26,11 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 /**
  * @author Tyler Lartonoix
  */
-public class RpgPlayer {
+public class RpgPlayer implements Metadatable<String, Object> {
     private final SpoutPlayer basePlayer;
     private final Map<StatType, Stat> stats;
     private final RpgHealthMeter health;
+    private final Map<String, Object> metadata = new HashMap<>();
 
     private RpgClass rpgClass;
 
@@ -63,9 +62,14 @@ public class RpgPlayer {
 	for (StatType t : StatType.values())
 	    statMap.put(t, new Stat(conf, t, "player.stats"));
 
-	this.stats = Collections.unmodifiableMap(statMap);
+	this.stats = statMap;
         this.health = new RpgHealthMeter(this, rpgClass.getConfiguration());
         this.health.setValue(conf.getInt("player.health", health.getMaxValue()));
+
+        ConfigurationSection s = conf.getConfigurationSection("player.metadata");
+
+        for (String k : s.getKeys(false))
+            metadata.put(k.replace('_', '.'), s.getString(k));
     }
 
     public String getName() {
@@ -146,6 +150,12 @@ public class RpgPlayer {
 	return null;
     }
 
+    public RpgPlayer setStat(StatType type, Stat stat) {
+        this.stats.put(type, stat);
+
+        return this;
+    }
+
     public RpgPlayer damage(int amount) {
         health.damage(amount);
 
@@ -201,10 +211,42 @@ public class RpgPlayer {
         for (StatType t : StatType.values())
             conf.set("player.stats." + t, stats.get(t).getValue());
 
+        for (String key : metadata.keySet())
+            conf.set("player.metadata." + key.replace('.', '_'), metadata.get(key));
+
         try {
             conf.save(f);
         } catch (IOException e) {
             SolusRpg.log(Level.SEVERE, "Could not save player data for {0}.", this.getName());
         }
+    }
+
+    public void putMetadata(String key, Object value) {
+        metadata.put(key, value);
+    }
+
+    public Object getMetadata(String key) {
+        return metadata.get(key);
+    }
+
+    public <T> T getMetadataAs(String key, Class<T> type) {
+        Object o = metadata.get(key);
+
+        if (o != null && type.isInstance(o))
+            return type.cast(o);
+        else
+            return null;
+    }
+
+    public void removeMetadata(String key) {
+        metadata.remove(key);
+    }
+
+    public int getMetadataCount() {
+        return metadata.size();
+    }
+
+    public boolean hasMetadata(String key) {
+        return metadata.containsKey(key);
     }
 }
