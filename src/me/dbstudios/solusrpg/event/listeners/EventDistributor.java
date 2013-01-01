@@ -11,6 +11,7 @@ import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.player.*;
+import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.DamageType;
 import org.bukkit.Bukkit;
@@ -259,5 +260,32 @@ public class EventDistributor implements Listener {
 	    ev.setCancelled(event.isCancelled());
 	    ev.setProjectile(event.getProjectile());
 	}
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerExpChange(PlayerExpChangeEvent ev) {
+        RpgPlayerExpChangeEvent event = new RpgPlayerExpChangeEvent(ev.getPlayer(), ev.getAmount());
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        ev.setAmount(event.getAmount());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void postPlayerExpChange(PlayerExpChangeEvent ev) {
+        if (ev.getAmount() > 0) {
+            RpgPlayer player = PlayerManager.get(ev.getPlayer());
+
+            player.addExp(ev.getAmount());
+//            float exp = 0f;
+//
+//            if (player.getExp() < ev.getAmount())
+//                exp = 1f;
+//
+//            exp += (float)((double)player.getExp() / (double)LevelManager.getExpToLevel(player.getLevel()));
+//
+//            player.getBasePlayer().setExp(exp);
+            ev.setAmount(0);
+        }
     }
 }

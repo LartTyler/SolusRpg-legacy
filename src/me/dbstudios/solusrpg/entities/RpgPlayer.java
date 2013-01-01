@@ -1,6 +1,8 @@
 
 package me.dbstudios.solusrpg.entities;
 
+import bsh.EvalError;
+import bsh.Interpreter;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
@@ -12,6 +14,7 @@ import me.dbstudios.solusrpg.entities.conf.*;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.managers.ClassManager;
+import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Metadatable;
 import me.dbstudios.solusrpg.util.Util;
@@ -32,6 +35,10 @@ public class RpgPlayer implements Metadatable<String, Object> {
     private final RpgHealthMeter health;
     private final Map<String, Object> metadata = new HashMap<>();
 
+    private int level = 0;
+    private int exp = 0;
+    private int skillPoints = -1;
+
     private RpgClass rpgClass;
 
     public RpgPlayer(Player p) throws RpgPlayerConfigException {
@@ -47,6 +54,8 @@ public class RpgPlayer implements Metadatable<String, Object> {
 	    } catch (IOException e) {
 		throw new RpgPlayerConfigException("Could not create player data file.");
 	    }
+
+            this.skillPoints = LevelManager.getSkillPointsPerLevel();
 	}
 
 	FileConfiguration conf = YamlConfiguration.loadConfiguration(f);
@@ -68,8 +77,15 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
         ConfigurationSection s = conf.getConfigurationSection("player.metadata");
 
-        for (String k : s.getKeys(false))
-            metadata.put(k.replace('_', '.'), s.getString(k));
+        if (s != null)
+            for (String k : s.getKeys(false))
+                metadata.put(k.replace('_', '.'), s.getString(k));
+
+        this.level = conf.getInt("player.level", 0);
+        this.exp = conf.getInt("player.experience", 0);
+
+        if (this.skillPoints == -1)
+            this.skillPoints = conf.getInt("player.skill-points", 0);
     }
 
     public String getName() {
@@ -186,10 +202,6 @@ public class RpgPlayer implements Metadatable<String, Object> {
         return this.health;
     }
 
-    public int getLevel() {
-        return basePlayer.getLevel();
-    }
-
     public void save() {
         File f = new File(Directories.DATA + basePlayer.getName().substring(0, 2).toLowerCase() + File.separator + basePlayer.getName().toLowerCase() + ".yml");
 
@@ -213,6 +225,10 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
         for (String key : metadata.keySet())
             conf.set("player.metadata." + key.replace('.', '_'), metadata.get(key));
+
+        conf.set("player.level", this.level);
+        conf.set("player.experience", this.exp);
+        conf.set("player.skill-points", this.skillPoints);
 
         try {
             conf.save(f);
@@ -248,5 +264,86 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
     public boolean hasMetadata(String key) {
         return metadata.containsKey(key);
+    }
+
+    public RpgPlayer setExp(int exp) {
+        this.exp = exp;
+
+        return this;
+    }
+
+    public int getExp() {
+        return this.exp;
+    }
+
+    public RpgPlayer addExp(int amount) {
+        this.exp += amount;
+
+        int toLevel = LevelManager.getExpToLevel(this.level + 1);
+
+        if (toLevel <= this.exp) {
+            while (toLevel <= this.exp) {
+                this.exp -= toLevel;
+                this.level++;
+                this.skillPoints += LevelManager.getSkillPointsPerLevel();
+
+                toLevel = LevelManager.getExpToLevel(this.level + 1);
+            }
+        }
+
+        this.basePlayer.setLevel(this.level);
+        this.basePlayer.setExp((float)((double)this.exp / (double)toLevel));
+
+        return this;
+    }
+
+    public RpgPlayer removeExp(int amount) {
+        this.exp = Math.max(this.exp - amount, 0);
+
+        return this;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public RpgPlayer setLevel(int level) {
+        this.level = level;
+
+        return this;
+    }
+
+    public RpgPlayer addLevels(int amount) {
+        this.level = LevelManager.getLevelCap() != -1 ? Math.min(this.level + amount, LevelManager.getLevelCap()) : this.level + amount;
+
+        return this;
+    }
+
+    public RpgPlayer removeLevels(int amount) {
+        this.level = Math.max(this.level - amount, 0);
+
+        return this;
+    }
+
+    public int getSkillPoints() {
+        return this.skillPoints;
+    }
+
+    public RpgPlayer setSkillPoints(int skillPoints) {
+        this.skillPoints = skillPoints;
+
+        return this;
+    }
+
+    public RpgPlayer addSkillPoints(int amount) {
+        this.skillPoints += amount;
+
+        return this;
+    }
+
+    public RpgPlayer removeSkillPoints(int amount) {
+        this.skillPoints = Math.max(this.skillPoints - amount, 0);
+
+        return this;
     }
 }
