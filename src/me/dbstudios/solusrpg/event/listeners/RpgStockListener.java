@@ -7,8 +7,6 @@ package me.dbstudios.solusrpg.event.listeners;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.StatType;
