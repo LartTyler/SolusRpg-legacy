@@ -15,5 +15,9 @@ public enum StatType {
     ARMOR,
     AURA,
     VITALITY,
-    PRECISION
+    PRECISION;
+
+    public String toString() {
+        return this.name().toLowerCase();
+    }
 }
