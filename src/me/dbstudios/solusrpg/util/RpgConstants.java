@@ -20,6 +20,7 @@ public class RpgConstants {
         "COAL",
         "COAL_ORE",
         "COBBLESTONE",
+        "COCOA",
         "COOKED_BEEF",
         "DIAMOND_ORE",
         "DIRT",
