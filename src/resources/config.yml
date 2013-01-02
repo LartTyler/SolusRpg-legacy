@@ -11,7 +11,7 @@ config:
       no-damage: "{aqua}Your blows fail to damage {green}{target}{aqua}."
   leveling:
     level-cap: -1
-    experience-algorithm: "30 + (20 * {level})"
+    experience-algorithm: "50 * {level}"
     skill-points: 10
   default-class: Classless
   classes:

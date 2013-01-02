@@ -25,7 +25,7 @@ public class LevelManager {
             FileConfiguration conf = YamlConfiguration.loadConfiguration(f);
 
             levelCap = conf.getInt("config.leveling.level-cap", -1);
-            expAlgorithm = conf.getString("config.leveling.experience-algorithm", "100 * (50 * {level})");
+            expAlgorithm = conf.getString("config.leveling.experience-algorithm", "50 * {level}");
             skillPointsPerLevel = conf.getInt("config.level.skill-points", 10);
         } else {
             levelCap = -1;
