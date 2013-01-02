@@ -58,7 +58,7 @@ public class LevelManager {
 
         if (rawToLevel == null)
             try {
-                rawToLevel = i.eval(expAlgorithm.replaceAll("(?i)\\{level\\}", level + ""));
+                rawToLevel = i.eval("50 * " + level);
             } catch (EvalError e) {}
 
         return (Integer)rawToLevel;
