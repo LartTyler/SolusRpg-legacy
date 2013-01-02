@@ -1,8 +1,6 @@
 
 package me.dbstudios.solusrpg.entities;
 
-import bsh.EvalError;
-import bsh.Interpreter;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
