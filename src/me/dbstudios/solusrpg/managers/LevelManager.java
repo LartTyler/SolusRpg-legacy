@@ -29,7 +29,7 @@ public class LevelManager {
             skillPointsPerLevel = conf.getInt("config.level.skill-points", 10);
         } else {
             levelCap = -1;
-            expAlgorithm = "100 * (50 * {level})";
+            expAlgorithm = "50 * {level}";
             skillPointsPerLevel = 10;
         }
     }
