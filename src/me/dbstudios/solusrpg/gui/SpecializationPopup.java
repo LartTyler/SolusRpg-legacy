@@ -11,11 +11,14 @@ import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.managers.SpecializationManager;
 import me.dbstudios.solusrpg.player.specialization.Specialization;
 import org.getspout.spoutapi.gui.Button;
+import org.getspout.spoutapi.gui.Color;
 import org.getspout.spoutapi.gui.Container;
 import org.getspout.spoutapi.gui.GenericButton;
 import org.getspout.spoutapi.gui.GenericContainer;
+import org.getspout.spoutapi.gui.GenericLabel;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTexture;
+import org.getspout.spoutapi.gui.Label;
 import org.getspout.spoutapi.gui.Texture;
 import org.getspout.spoutapi.gui.Widget;
 import org.getspout.spoutapi.gui.WidgetAnchor;
@@ -91,12 +94,14 @@ public class SpecializationPopup extends GenericPopup {
                 Container c = new GenericContainer();
                 Texture image = new GenericTexture(spec.getIconPath());
                 Button decrease = new GenericButton("-"), increase = new GenericButton("+");
+                Label levelLabel = new GenericLabel(spec.getLevel(owner) + "/" + spec.getMaxLevel());
 
                 c.setAnchor(WidgetAnchor.CENTER_CENTER).setWidth(32).setHeight(48).setX(-(pos * offset)).setY(54 * depth);
 
                 image.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(32).setWidth(32).setX(0).setY(0);
                 decrease.setEnabled(false).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(14).setWidth(14).setX(0).setY(34);
                 increase.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(14).setWidth(14).setX(16).setY(34);
+                levelLabel.setTextColor(new Color(0, 255, 0)).setAlign(WidgetAnchor.TOP_RIGHT).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(10).setWidth(30).setX(0).setY(20);
 
                 c.addChildren(image, decrease, increase);
                 mc.addChild(c);
