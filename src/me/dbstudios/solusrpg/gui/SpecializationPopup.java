@@ -36,7 +36,7 @@ public class SpecializationPopup extends GenericPopup {
         c.setAuto(false).setAutoDirty(true);
 
         for (Specialization s : SpecializationManager.getSpecializationCollection())
-            c.addChild(SpecializationPopup.buildTree(s));
+            c.addChild(buildTree(s));
 
         Widget[] children = c.getChildren();
 
@@ -49,7 +49,7 @@ public class SpecializationPopup extends GenericPopup {
         this.treeContainer = c;
     }
 
-    private static Container buildTree(Specialization rootSpec) {
+    private Container buildTree(Specialization rootSpec) {
         Container mc = new GenericContainer();
         List<Specialization> specList = new ArrayList<>();
 
