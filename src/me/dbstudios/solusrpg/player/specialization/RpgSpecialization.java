@@ -104,6 +104,8 @@ public class RpgSpecialization implements Specialization {
                     player.setStat(key, player.getStat(key).merge(new Stat(-stats.get(key).getValue(), key)));
                 } catch (IncompatibleStatTypeException e) {}
 
+            player.removeMetadata(uniqueName + ".level");
+
             return true;
         }
 
@@ -154,5 +156,15 @@ public class RpgSpecialization implements Specialization {
             return requires.get(level);
 
         return null;
+    }
+
+    public int getLevel(RpgPlayer player) {
+        Integer level = player.getMetadataAs(uniqueName + ".level", Integer.class);
+
+        return level != null ? level + 1 : 0;
+    }
+
+    public int getMaxLevel() {
+        return statEffects.size();
     }
 }

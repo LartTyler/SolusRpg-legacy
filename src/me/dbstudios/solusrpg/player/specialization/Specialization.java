@@ -19,4 +19,6 @@ public interface Specialization {
     public String getUniqueName();
     public boolean hasRequiredSpecializations(RpgPlayer player, int level);
     public Map<String, Integer> getRequiredSpecializations(int level);
+    public int getLevel(RpgPlayer player);
+    public int getMaxLevel();
 }
