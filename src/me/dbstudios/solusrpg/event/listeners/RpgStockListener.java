@@ -13,6 +13,7 @@ import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.player.*;
+import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.Util;
@@ -247,5 +248,11 @@ public class RpgStockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerSpawn(RpgPlayerSpawnEvent ev) {
         ev.getPlayer().setHealth(ev.getPlayer().getMaxHealth());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onRpgPlayerExpChange(RpgPlayerExpChangeEvent ev) {
+        if (LevelManager.getLevelCap() != -1 && ev.getPlayer().getLevel() >= LevelManager.getLevelCap())
+            ev.setAmount(0);
     }
 }
