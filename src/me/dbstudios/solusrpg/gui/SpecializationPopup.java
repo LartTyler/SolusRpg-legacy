@@ -93,17 +93,17 @@ public class SpecializationPopup extends GenericPopup {
             for (Specialization spec : specList) {
                 Container c = new GenericContainer();
                 Texture image = new GenericTexture(spec.getIconPath());
-                Button decrease = new GenericButton("-"), increase = new GenericButton("+");
                 Label levelLabel = new GenericLabel(spec.getLevel(owner) + "/" + spec.getMaxLevel());
+                Button levelUpButton = new LevelUpButton("Level Up", spec, levelLabel);
 
                 c.setAnchor(WidgetAnchor.CENTER_CENTER).setWidth(32).setHeight(48).setX(-(pos * offset)).setY(54 * depth);
 
                 image.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(32).setWidth(32).setX(0).setY(0);
-                decrease.setEnabled(false).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(14).setWidth(14).setX(0).setY(34);
-                increase.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(14).setWidth(14).setX(16).setY(34);
-                levelLabel.setTextColor(new Color(0, 255, 0)).setAlign(WidgetAnchor.TOP_RIGHT).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(10).setWidth(30).setX(0).setY(20);
+                levelUpButton.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(14).setWidth(32).setX(0).setY(34);
+                levelLabel.setTextColor(new Color(255, 255, 255)).setShadow(true).setAlign(WidgetAnchor.TOP_RIGHT).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(10).setWidth(30).setX(0)
+                        .setY(20).setAutoDirty(true);
 
-                c.addChildren(image, decrease, increase);
+                c.addChildren(image, levelUpButton, levelLabel);
                 mc.addChild(c);
 
                 if (spec.hasSubSpecialization())
