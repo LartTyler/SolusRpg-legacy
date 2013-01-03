@@ -25,8 +25,11 @@ public class SpecializationPopup extends GenericPopup {
         this.owner = owner;
 
         Container c = new GenericContainer();
+        int screenWidth = owner.getBasePlayer().getMainScreen().getWidth(), screenHeight = owner.getBasePlayer().getMainScreen().getHeight();
 
-        c.setAuto(false).setAutoDirty(true);
+        c.setAuto(false).setFixed(true).setAnchor(WidgetAnchor.TOP_LEFT).setWidth(screenWidth - 20).setHeight(screenHeight - 20).setX(10).setY(10).setAutoDirty(true);
+
+        SolusRpg.log(Level.INFO, "Spec. tree container: width = {0}, height = {1}, x = {2}, y = {3}", c.getWidth(), c.getHeight(), c.getX(), c.getY());
 
         for (Specialization s : SpecializationManager.getSpecializationCollection())
             c.addChild(buildTree(s));
@@ -35,11 +38,14 @@ public class SpecializationPopup extends GenericPopup {
 
         for (int i = 0; i < children.length; i++)
             if (i == 0)
-                children[i].setX(10);
+                children[i].setX(0);
             else
-                children[i].setX(children[i - 1].getWidth() + 20);
+                children[i].setX(children[i - 1].getWidth() + 5);
 
-        this.attachWidget(SolusRpg.getInstance(), c).setWidth(owner.getBasePlayer().getMainScreen().getWidth()).setHeight(owner.getBasePlayer().getMainScreen().getHeight()).setX(0).setY(0).setAnchor(WidgetAnchor.TOP_LEFT);
+        this.setFixed(true).setWidth(screenWidth).setHeight(screenHeight).setX(0).setY(0).setAnchor(WidgetAnchor.TOP_LEFT);
+        this.attachWidget(SolusRpg.getInstance(), c);
+
+        SolusRpg.log(Level.INFO, "SpecializationPopup: width = {0}, height = {1}, x = {2}, y = {3}", this.getWidth(), this.getHeight(), this.getX(), this.getY());
     }
 
     private Container buildTree(Specialization rootSpec) {
@@ -78,7 +84,9 @@ public class SpecializationPopup extends GenericPopup {
 
         SolusRpg.log(Level.INFO, "\t'{0}' tree found to be {1} deep and {2} wide.", rootSpec.getUniqueName(), deep, wide);
 
-        mc.setWidth(32 * wide - 4 * (wide - 1)).setHeight(48 * deep - 6 * (deep - 1)).setAnchor(WidgetAnchor.TOP_LEFT);
+        mc.setAuto(false).setFixed(true).setWidth(32 * wide + 5 * (wide - 1)).setHeight(48 * deep + 6 * (deep - 1)).setAnchor(WidgetAnchor.TOP_LEFT);
+
+        SolusRpg.log(Level.INFO, "\t'{0}' tree found to have a width of {1} and a height of {2}.", rootSpec.getUniqueName(), mc.getWidth(), mc.getHeight());
 
         int depth = 0;
 
@@ -106,6 +114,7 @@ public class SpecializationPopup extends GenericPopup {
 
                 SolusRpg.log(Level.INFO, "\t\t\tPlacing Spec. container at x = {0} and y = {1}.", c.getX(), c.getY());
 
+                c.addChildren(g, levelUpButton, levelLabel);
 //                image.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(32).setWidth(32).setX(0).setY(0);
                 g.setFixed(true).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(32).setWidth(32).setX(0).setY(0);
                 levelUpButton.setAuto(false).setFixed(true).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(8).setWidth(32).setX(0).setY(0);
@@ -113,7 +122,6 @@ public class SpecializationPopup extends GenericPopup {
                         .setY(20).setAutoDirty(true).setPriority(RenderPriority.Low);
 
 //                c.addChildren(image, levelUpButton, levelLabel);
-                c.addChildren(g, levelUpButton, levelLabel);
                 mc.addChild(c);
 
                 if (spec.hasSubSpecialization())
