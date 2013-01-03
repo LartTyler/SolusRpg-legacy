@@ -16,6 +16,7 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class RpgSpecialization implements Specialization {
     private final List<Map<String, Integer>> requires;
+    private final List<Integer> levelReqs;
     private final List<Map<StatType, Stat>> statEffects;
     private final List<Map<PermitNode, List<Pattern>>> permitEffects;
     private final List<Specialization> subSpecs;
@@ -67,14 +68,20 @@ public class RpgSpecialization implements Specialization {
         this.permitEffects = Collections.unmodifiableList(permitList);
 
         List<Map<String, Integer>> reqList = new ArrayList<>();
+        List<Integer> levels = new ArrayList<>();
         list = conf.getMapList("requires");
 
         if (list != null)
-            for (Map<?, ?> map : list)
+            for (Map<?, ?> map : list) {
                 if (map.containsKey("specialization") && map.get("specialization") instanceof Map)
                     reqList.add(Util.toTypedMap((Map)map.get("specialization"), String.class, Integer.class));
 
+                if (map.containsKey("level") && map.get("level") instanceof Integer)
+                    levels.add((Integer)map.get("level"));
+            }
+
         this.requires = Collections.unmodifiableList(reqList);
+        this.levelReqs = Collections.unmodifiableList(levels);
 
         if (conf.isString("unique-name"))
             this.uniqueName = conf.getString("unique-name");
@@ -174,7 +181,9 @@ public class RpgSpecialization implements Specialization {
                 if (player.getMetadataAs(spec, Integer.class) < preSpecs.get(spec))
                     hasSpecs = false;
 
-            return hasSpecs;
+            Integer levelReq = levelReqs.get(level);
+
+            return hasSpecs && (levelReq == null || levelReq <= player.getLevel());
         }
 
         return false;
@@ -194,6 +203,6 @@ public class RpgSpecialization implements Specialization {
     }
 
     public int getMaxLevel() {
-        return statEffects.size();
+        return Math.max(statEffects.size(), permitEffects.size());
     }
 }
