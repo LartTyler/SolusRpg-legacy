@@ -3,10 +3,13 @@ package me.dbstudios.solusrpg.entities;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.conf.*;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
@@ -33,6 +36,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
     private final RpgHealthMeter health;
     private final Map<String, Object> metadata = new HashMap<>();
 
+    private Map<PermitNode, List<Pattern>> permitNodes = new EnumMap<>(PermitNode.class);
     private int level = 0;
     private int exp = 0;
     private int skillPoints = -1;
@@ -84,6 +88,9 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
         if (this.skillPoints == -1)
             this.skillPoints = conf.getInt("player.skill-points", 0);
+
+        for (PermitNode n : PermitNode.values())
+            permitNodes.get(n).addAll(Util.toTypedList(conf.getList("player.permit-nodes." + n, null), Pattern.class));
     }
 
     public String getName() {
@@ -151,7 +158,41 @@ public class RpgPlayer implements Metadatable<String, Object> {
     }
 
     public boolean isAllowed(PermitNode node, String item) {
+        for (Pattern p : permitNodes.get(node))
+            if (p.matcher(item).find())
+                return true;
+
 	return rpgClass.isAllowed(node, item);
+    }
+
+    public void addAllowed(PermitNode node, String pattern) {
+        this.addAllowed(node, Pattern.compile(pattern));
+    }
+
+    public void addAllowed(PermitNode node, Pattern pattern) {
+        List<Pattern> patterns = new ArrayList<>();
+
+        patterns.add(pattern);
+        this.addAllowed(node, patterns);
+    }
+
+    public void addAllowed(PermitNode node, List<Pattern> patterns) {
+        permitNodes.get(node).addAll(patterns);
+    }
+
+    public void removeAllowed(PermitNode node, String pattern) {
+        this.removeAllowed(node, Pattern.compile(pattern));
+    }
+
+    public void removeAllowed(PermitNode node, Pattern pattern) {
+        List<Pattern> patterns = new ArrayList<>();
+
+        patterns.add(pattern);
+        this.removeAllowed(node, patterns);
+    }
+
+    public void removeAllowed(PermitNode node, List<Pattern> patterns) {
+        permitNodes.get(node).removeAll(patterns);
     }
 
     public Stat getStat(StatType type) {
@@ -227,6 +268,9 @@ public class RpgPlayer implements Metadatable<String, Object> {
         conf.set("player.level", this.level);
         conf.set("player.experience", this.exp);
         conf.set("player.skill-points", this.skillPoints);
+
+        for (PermitNode key : permitNodes.keySet())
+            conf.set("player.permit-nodes." + key, permitNodes.get(key));
 
         try {
             conf.save(f);

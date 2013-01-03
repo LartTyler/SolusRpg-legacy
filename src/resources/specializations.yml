@@ -2,14 +2,26 @@ combat:
   effects:
     - stat:
         strength: 5
+      permit:
+        can-use:
+          - STONE_SWORD
     - stat:
         strength: 10
+      permit:
+        can-use:
+          - IRON_SWORD
     - stat:
         strength: 20
         vitality: 10
+      permit:
+        can-use:
+          - GOLD_SWORD
     - stat:
         strength: 50
         vitality: 30
+      permit:
+        can-use:
+          - DIAMOND_SWORD
   unique-name: combat
   icon-path: http://dl.dropbox.com/<userid>/combat.png
   strength-training:

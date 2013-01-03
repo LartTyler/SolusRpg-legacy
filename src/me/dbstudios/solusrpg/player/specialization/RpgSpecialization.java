@@ -2,7 +2,9 @@
 package me.dbstudios.solusrpg.player.specialization;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
+import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.Stat;
 import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
@@ -15,6 +17,7 @@ import org.bukkit.configuration.ConfigurationSection;
 public class RpgSpecialization implements Specialization {
     private final List<Map<String, Integer>> requires;
     private final List<Map<StatType, Stat>> statEffects;
+    private final List<Map<PermitNode, List<Pattern>>> permitEffects;
     private final List<Specialization> subSpecs;
     private final Specialization preSpec;
     private final String uniqueName;
@@ -29,6 +32,7 @@ public class RpgSpecialization implements Specialization {
 
         List<Map<?, ?>> list = conf.getMapList("effects");
         List<Map<StatType, Stat>> statsList = new ArrayList<>();
+        List<Map<PermitNode, List<Pattern>>> permitList = new ArrayList<>();
 
         if (list != null)
             for (Map<?, ?> map : list) {
@@ -42,9 +46,25 @@ public class RpgSpecialization implements Specialization {
 
                     statsList.add(stats);
                 }
+
+                if (map.containsKey("permit") && map.get("permit") instanceof Map) {
+                    Map<?, ?> permitMap = (Map)map.get("permit");
+                    Map<PermitNode, List<Pattern>> nodes = new EnumMap<>(PermitNode.class);
+
+                    for (PermitNode n : PermitNode.values())
+                        if (permitMap.containsKey(n.toString()) && permitMap.get(n.toString()) instanceof List) {
+                            List<Pattern> patterns = new ArrayList<>();
+
+                            patterns.addAll((List)permitMap.get(n.toString()));
+                            nodes.put(n, patterns);
+                        }
+
+                    permitList.add(nodes);
+                }
             }
 
         this.statEffects = Collections.unmodifiableList(statsList);
+        this.permitEffects = Collections.unmodifiableList(permitList);
 
         List<Map<String, Integer>> reqList = new ArrayList<>();
         list = conf.getMapList("requires");
@@ -87,6 +107,9 @@ public class RpgSpecialization implements Specialization {
                     player.setStat(key, player.getStat(key).merge(stats.get(key)));
                 } catch (IncompatibleStatTypeException e) {}
 
+            for (PermitNode n : permitEffects.get(level).keySet())
+                player.addAllowed(n, permitEffects.get(level).get(n));
+
             player.putMetadata(uniqueName + ".level", level);
 
             return true;
@@ -103,6 +126,8 @@ public class RpgSpecialization implements Specialization {
                 try {
                     player.setStat(key, player.getStat(key).merge(new Stat(-stats.get(key).getValue(), key)));
                 } catch (IncompatibleStatTypeException e) {}
+
+            // Permit effects are only applied and never removed
 
             player.removeMetadata(uniqueName + ".level");
 
@@ -139,6 +164,10 @@ public class RpgSpecialization implements Specialization {
     public boolean hasRequiredSpecializations(RpgPlayer player, int level) {
         if (level >= 0 && level < requires.size()) {
             Map<String, Integer> preSpecs = requires.get(level);
+
+            if (preSpecs == null)
+                return true;
+
             boolean hasSpecs = true;
 
             for (String spec : preSpecs.keySet())
