@@ -21,6 +21,8 @@ public class RpgCommandExecutor implements CommandExecutor {
 	    return RpgInfoCommand.onCommand(sender, command, args);
         else if (args.length > 1 && args[0].equalsIgnoreCase("list"))
             return RpgListCommand.onCommand(sender, command, args);
+        else if (args.length == 1 && args[0].equalsIgnoreCase("spec"))
+            return RpgSpecCommand.onCommand(sender, command, args);
 
 	return false;
     }
