@@ -176,7 +176,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Gets the string URI of the image that should be used to represent this specialization on the spec tree
+     * Gets the string URI of the image that should be used to represent this specialization on the spec tree.
      *
      * @return      The String URI of this specializations image
      */
@@ -194,7 +194,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Determines if this specialization is the root specialization of it's tree
+     * Determines if this specialization is the root specialization of it's tree.
      *
      * @return
      */
@@ -203,7 +203,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Gets a list of all sub-specializations of this specialization
+     * Gets a list of all sub-specializations of this specialization.
      *
      * @return      A <code>List</code> of all sub-specializations, or an empty list if none are found
      */
@@ -212,7 +212,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Gets the specialization that is the parent of this specialization
+     * Gets the specialization that is the parent of this specialization.
      *
      * @return      The parent specialization, or null if this is the root specialization of it's tree
      */
@@ -221,7 +221,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Gets the unique name of this specialization
+     * Gets the unique name of this specialization.
      *
      * The unique name is generally used for specialization metadata. It is constructed from the path used to reach it's configuration section.
      *
@@ -232,7 +232,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Checks to see if the given player has the prerequisites necessary to obtain this specialization at <code>level</code>
+     * Checks to see if the given player has the prerequisites necessary to obtain this specialization at <code>level</code>.
      *
      * @param player        - The player to check
      * @param level         - The level to check
@@ -276,7 +276,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Gets the level required to obtain this specialization at <code>level</code>
+     * Gets the level required to obtain this specialization at <code>level</code>.
      *
      * @param level     - The desired level
      * @return          - The player level required, or null if one is not required
@@ -286,7 +286,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Gets the player's current specialization level
+     * Gets the player's current specialization level.
      *
      * @param player    - The player to query
      * @return          - 0 if they player has not learned this specialization, or the player's current spec. level
@@ -298,7 +298,7 @@ public class RpgSpecialization implements Specialization {
     }
 
     /**
-     * Gets the max possible level of this specialization
+     * Gets the max possible level of this specialization.
      *
      * @return
      */
