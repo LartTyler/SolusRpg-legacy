@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
+import me.dbstudios.solusrpg.tasks.PlayerReloadTask;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -65,5 +67,9 @@ public class PlayerManager {
 
     public static Collection<RpgPlayer> getOnlinePlayers() {
         return players.values();
+    }
+
+    public static void reloadPlayer(Player player) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(SolusRpg.getInstance(), new PlayerReloadTask(player), 5);
     }
 }

@@ -16,6 +16,7 @@ import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.managers.LevelManager;
+import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Metadatable;
 import me.dbstudios.solusrpg.util.Util;
@@ -387,5 +388,68 @@ public class RpgPlayer implements Metadatable<String, Object> {
         this.skillPoints = Math.max(this.skillPoints - amount, 0);
 
         return this;
+    }
+
+    public File getSaveFile() {
+        return new File(Directories.DATA + basePlayer.getName().substring(0, 2).toLowerCase() + File.separator + basePlayer.getName().toLowerCase() + ".yml");
+    }
+
+    public FileConfiguration getConfiguration() {
+        return YamlConfiguration.loadConfiguration(this.getSaveFile());
+    }
+
+    public boolean modify(String node, String val) {
+        for (StatType t : StatType.values())
+            if (t.toString().equalsIgnoreCase(node))
+                try {
+                    stats.put(t, new Stat(val != null ? Integer.parseInt(val) : 0, t));
+
+                    return true;
+                } catch (NumberFormatException e) {
+                    SolusRpg.log(Level.WARNING, "An invalid argument was passed to modify. Expected int, got string.");
+
+                    return false;
+                }
+
+        if (node.equalsIgnoreCase("health"))
+            try {
+                this.setHealth(val != null ? Integer.parseInt(val) : 0);
+
+                return true;
+            } catch (NumberFormatException e) {
+                SolusRpg.log(Level.WARNING, "An invalid argument was passed to modify. Expected int, got string.");
+
+                return false;
+            }
+
+        // Not implemented
+//        if (node.equalsIgnoreCase("energy"))
+//            try {
+//                this.setEnergy(val != null ? Integer.parseInt(val) : 0);
+//            } catch (NumberFormatException e) {
+//                SolusRpg.log(Level.WARNING, "An invalid argument was passed to modify. Expected int, got string.");
+//            }
+
+        if (node.equalsIgnoreCase("name")) {
+            this.setDisplayName(val != null ? val : this.getName());
+
+            return true;
+        }
+
+        FileConfiguration conf = this.getConfiguration();
+
+        conf.set("player." + node, val);
+
+        try {
+            conf.save(this.getSaveFile());
+
+            PlayerManager.reloadPlayer(this.getBasePlayer());
+        } catch (IOException e) {
+            SolusRpg.log(Level.WARNING, "Could not save modified player data. Reason: {0}", e.getMessage());
+
+            return false;
+        }
+
+        return true;
     }
 }
