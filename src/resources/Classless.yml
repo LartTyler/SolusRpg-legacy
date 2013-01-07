@@ -3,7 +3,6 @@ class:
   description: The default class
   permit-nodes:
     can-use:
-      - "@WOOD_TOOLS"
       - "@COMMON_ITEMS"
     can-break:
       - "@COMMON_ITEMS"
@@ -15,10 +14,11 @@ class:
       - "@COMMON_ITEMS"
     can-smelt:
       - "@COMMON_ITEMS"
+      - "@RAW_MEAT"
   stats:
-    strength: 5  # Physical damage
-    magic: 5     # Magical damage
-    armor: 2     # Physical resistance
-    aura: 1      # Magical resistance
+    strength: 1  # Physical damage
+    magic: 0     # Magical damage
+    armor: 0     # Physical resistance
+    aura: 0      # Magical resistance
     vitality: 50 # Health
-    precision: 5 # Critical ratio / damage modifier (0 - 25 = 125% dmg, 26 - 50 = 150% dmg, 51 - 75 = 175% dmg, 76 - 100 = 200% dmg)
+    precision: 0 # Critical ratio / damage modifier (0 - 25 = 125% dmg, 26 - 50 = 150% dmg, 51 - 75 = 175% dmg, 76 - 100 = 200% dmg)

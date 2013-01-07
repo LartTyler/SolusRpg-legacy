@@ -1,14 +1,22 @@
 
 package me.dbstudios.solusrpg.player.specialization;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
+import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
+import me.dbstudios.solusrpg.entities.conf.ItemGroups;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.Stat;
 import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
+import me.dbstudios.solusrpg.util.Directories;
+import me.dbstudios.solusrpg.util.RpgConstants;
 import me.dbstudios.solusrpg.util.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -18,11 +26,13 @@ public class RpgSpecialization implements Specialization {
     private final List<Map<String, Integer>> requires;
     private final List<Integer> levelReqs;
     private final List<Map<StatType, Stat>> statEffects;
-    private final List<Map<PermitNode, List<Pattern>>> permitEffects;
+    private final List<Map<PermitNode, List<String>>> permitEffects;
     private final List<Specialization> subSpecs;
     private final Specialization preSpec;
     private final String uniqueName;
+    private final String name;
     private final String icoPath;
+    private final String desc;
 
     /**
      * Used to construct a new Specialization tree. The specialization present at the given <code>section</code> will be used as the root node for this tree.
@@ -40,7 +50,7 @@ public class RpgSpecialization implements Specialization {
 
         List<Map<?, ?>> list = conf.getMapList("effects");
         List<Map<StatType, Stat>> statsList = new ArrayList<>();
-        List<Map<PermitNode, List<Pattern>>> permitList = new ArrayList<>();
+        List<Map<PermitNode, List<String>>> permitList = new ArrayList<>();
 
         if (list != null)
             for (Map<?, ?> map : list) {
@@ -53,21 +63,28 @@ public class RpgSpecialization implements Specialization {
                             stats.put(t, new Stat(statMap.get(t.toString()), t));
 
                     statsList.add(stats);
+                } else {
+                    statsList.add(null);
                 }
 
                 if (map.containsKey("permit") && map.get("permit") instanceof Map) {
                     Map<?, ?> permitMap = (Map)map.get("permit");
-                    Map<PermitNode, List<Pattern>> nodes = new EnumMap<>(PermitNode.class);
+                    Map<PermitNode, List<String>> nodes = new EnumMap<>(PermitNode.class);
 
                     for (PermitNode n : PermitNode.values())
-                        if (permitMap.containsKey(n.toString()) && permitMap.get(n.toString()) instanceof List) {
-                            List<Pattern> patterns = new ArrayList<>();
+                        if (permitMap.containsKey(n.getNode()) && permitMap.get(n.getNode()) instanceof List) {
+                            List<String> patterns = new ArrayList<>();
 
-                            patterns.addAll((List)permitMap.get(n.toString()));
+                            for (Object pat : (List)permitMap.get(n.getNode()))
+                                if (pat instanceof String)
+                                    patterns.add((String)pat);
+
                             nodes.put(n, patterns);
                         }
 
                     permitList.add(nodes);
+                } else {
+                    permitList.add(null);
                 }
             }
 
@@ -100,11 +117,15 @@ public class RpgSpecialization implements Specialization {
             this.uniqueName = conf.getCurrentPath();
 
         this.icoPath = conf.getString("icon-path", null);
+        this.desc = conf.getString("description", "No description available.");
+        this.name = conf.getString("name", this.uniqueName);
 
         conf.set("effects", null);
         conf.set("unique-name", null);
         conf.set("icon-path", null);
         conf.set("requires", null);
+        conf.set("description", null);
+        conf.set("name", null);
 
         List<Specialization> subs = new ArrayList<>();
 
@@ -126,18 +147,31 @@ public class RpgSpecialization implements Specialization {
      * @return              - True if the specialization was applied successfully
      */
     public boolean applyEffect(RpgPlayer player, int level) {
-        if (level >= 0 && level < statEffects.size()) {
+        level -= 1;
+
+        if (level >= 0 && level < this.getMaxLevel()) {
             Map<StatType, Stat> stats = statEffects.get(level);
 
-            for (StatType key : stats.keySet())
-                try {
-                    player.setStat(key, player.getStat(key).merge(stats.get(key)));
-                } catch (IncompatibleStatTypeException e) {}
+            if (statEffects.get(level) != null)
+                for (StatType key : stats.keySet())
+                    try {
+                        player.setStat(key, player.getStat(key).merge(stats.get(key)));
+                    } catch (IncompatibleStatTypeException e) {}
 
-            for (PermitNode n : permitEffects.get(level).keySet())
-                player.addAllowed(n, permitEffects.get(level).get(n));
+            if (permitEffects.get(level) != null)
+                for (PermitNode n : permitEffects.get(level).keySet()) {
+                    List<Pattern> patterns = new ArrayList<>();
 
-            player.putMetadata(uniqueName + ".level", level);
+                    for (String s : permitEffects.get(level).get(n))
+                        if (s.charAt(0) == RpgConstants.ITEM_GROUP_IDENTIFIER && ItemGroups.groupExists(s.substring(1).toLowerCase()))
+                            patterns.addAll(ItemGroups.getGroup(s.substring(1).toLowerCase()));
+                        else
+                            patterns.add(Pattern.compile(s));
+
+                    player.addAllowed(n, patterns);
+                }
+
+            player.putMetadata(uniqueName + ".level", level + 1);
 
             return true;
         }
@@ -160,10 +194,11 @@ public class RpgSpecialization implements Specialization {
         if (player.getMetadataAs(uniqueName + ".level", Integer.class) == level) {
             Map<StatType, Stat> stats = statEffects.get(level);
 
-            for (StatType key : stats.keySet())
-                try {
-                    player.setStat(key, player.getStat(key).merge(new Stat(-stats.get(key).getValue(), key)));
-                } catch (IncompatibleStatTypeException e) {}
+            if (stats != null)
+                for (StatType key : stats.keySet())
+                    try {
+                        player.setStat(key, player.getStat(key).merge(new Stat(-stats.get(key).getValue(), key)));
+                    } catch (IncompatibleStatTypeException e) {}
 
             // Permit effects are only applied and never removed
 
@@ -239,17 +274,16 @@ public class RpgSpecialization implements Specialization {
      * @return              - True if the player has all prerequisites
      */
     public boolean hasRequiredSpecializations(RpgPlayer player, int level) {
+        level -= 1;
+
         if (level >= 0 && level < requires.size()) {
             Map<String, Integer> preSpecs = requires.get(level);
-
-            if (preSpecs == null)
-                return true;
-
             boolean hasSpecs = true;
 
-            for (String spec : preSpecs.keySet())
-                if (player.getMetadataAs(spec, Integer.class) < preSpecs.get(spec))
-                    hasSpecs = false;
+            if (preSpecs != null)
+                for (String spec : preSpecs.keySet())
+                    if (player.getMetadataAs(spec + ".level", Integer.class) != null && player.getMetadataAs(spec + ".level", Integer.class) < preSpecs.get(spec))
+                        hasSpecs = false;
 
             Integer levelReq = null;
 
@@ -294,7 +328,7 @@ public class RpgSpecialization implements Specialization {
     public int getLevel(RpgPlayer player) {
         Integer level = player.getMetadataAs(uniqueName + ".level", Integer.class);
 
-        return level != null ? level + 1 : 0;
+        return level != null ? level : 0;
     }
 
     /**
@@ -304,5 +338,126 @@ public class RpgSpecialization implements Specialization {
      */
     public int getMaxLevel() {
         return Math.max(statEffects.size(), permitEffects.size());
+    }
+
+    public String getDescription() {
+        return this.desc;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getTooltip(int level) {
+        String tooltip = "";
+
+        level -= 1;
+
+        try {
+            Scanner s = new Scanner(new File(Directories.CONFIG + "spec_tooltip_format.dat"));
+            Map<String, String> args = new HashMap<>();
+
+            args.put("name", this.name);
+            args.put("description", this.desc);
+
+            String repl;
+
+            if (level < 0) {
+                repl = "None";
+            } else {
+                Map<StatType, Stat> stats = statEffects.get(level);
+
+                repl = "Stat Changes:";
+
+                if (stats != null)
+                    for (StatType t : stats.keySet())
+                        repl += "\n{pre}  " + t + ": " + (stats.get(t).getValue() >= 0 ? "+" : "") + stats.get(t).getValue() + "{post}";
+                else
+                    repl += "\n{pre}  None{post}";
+
+                Map<PermitNode, List<String>> permits = permitEffects.get(level);
+
+                repl += "\n{pre}Permit Changes:{post}";
+
+                if (permits != null)
+                    for (PermitNode n : permits.keySet()) {
+                        String list = "";
+
+                        for (String el : permits.get(n)) {
+                            String value = "";
+
+                            for (String seg : el.charAt(0) == '@' ? el.substring(1).split("_") : el.split("_"))
+                                value += " " + seg.substring(0, 1).toUpperCase() + seg.substring(1).toLowerCase();
+
+                            list += ", " + value.substring(1);
+                        }
+
+                        repl += "\n{pre}  " + n.getText() + ": " + (list.length() == 0 ? "None" : list.substring(2));
+                    }
+                else
+                    repl += "\n{pre}  None{post}";
+            }
+
+            args.put("effects", repl);
+
+            if (level + 1 >= this.getMaxLevel()) {
+                repl = "Max level";
+            } else {
+                Map<StatType, Stat> stats = statEffects.get(level + 1);
+
+                repl = "Stat Changes:";
+
+                if (stats != null)
+                    for (StatType t : stats.keySet())
+                        repl += "\n{pre}  " + t + ": " + (stats.get(t).getValue() >= 0 ? "+" : "") + stats.get(t).getValue() + "{post}";
+                else
+                    repl += "\n{pre}  None{post}";
+
+                Map<PermitNode, List<String>> permits = permitEffects.get(level + 1);
+
+                repl += "\n{pre}Permit Changes:{post}";
+
+                if (permits != null)
+                    for (PermitNode n : permits.keySet()) {
+                        String list = "";
+
+                        for (String el : permits.get(n)) {
+                            String value = "";
+
+                            for (String seg : el.charAt(0) == '@' ? el.substring(1).split("_") : el.split("_"))
+                                value += " " + seg.substring(0, 1).toUpperCase() + seg.substring(1).toLowerCase();
+
+                            list += ", " + value.substring(1);
+                        }
+
+                        repl += "\n{pre}  " + n.getText() + ": " + list.substring(2);
+                    }
+                else
+                    repl += "\n{pre}  None{post}";
+            }
+
+            args.put("next-effects", repl);
+
+            while (s.hasNextLine()) {
+                String line = s.nextLine();
+
+                for (String key : args.keySet()) {
+                    if (line.toLowerCase().contains("{effects}") || line.toLowerCase().contains("{next-effects}")) {
+                        String[] broken = line.split("(?i)\\{(next-)?effects\\}");
+
+                        args.put(key, args.get(key).replaceAll("(?i)\\{pre\\}", broken[0]).replaceAll("(?i)\\{post\\}", broken.length > 1 ? broken[1] : ""));
+                    }
+
+                    line = line.replaceAll("(?i)\\{" + key + "\\}", args.get(key));
+                }
+
+                for (ChatColor c : ChatColor.values())
+                    line = line.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
+
+                tooltip += (tooltip.length() > 0 ? "\n" : "") + line;
+            }
+        } catch (IOException e) {}
+
+        return tooltip;
     }
 }

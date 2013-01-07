@@ -17,6 +17,7 @@ public class LevelManager {
     private static final int levelCap;
     private static final String expAlgorithm;
     private static final int skillPointsPerLevel;
+    private static final int startingLevel;
 
     static {
         File f = new File(Directories.CONFIG + "config.yml");
@@ -27,10 +28,12 @@ public class LevelManager {
             levelCap = conf.getInt("config.leveling.level-cap", -1);
             expAlgorithm = conf.getString("config.leveling.experience-algorithm", "50 * {level}");
             skillPointsPerLevel = conf.getInt("config.level.skill-points", 10);
+            startingLevel = conf.getInt("config.level.starting-level", 1);
         } else {
             levelCap = -1;
             expAlgorithm = "50 * {level}";
             skillPointsPerLevel = 10;
+            startingLevel = 1;
         }
     }
 
@@ -62,5 +65,9 @@ public class LevelManager {
             } catch (EvalError e) {}
 
         return (Integer)rawToLevel;
+    }
+
+    public static int getStartingLevel() {
+        return startingLevel;
     }
 }

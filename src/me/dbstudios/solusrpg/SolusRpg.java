@@ -57,6 +57,11 @@ public class SolusRpg extends JavaPlugin {
         if (!f.exists())
             Util.extract("/resources/class_list_format.dat", f);
 
+        f = new File(Directories.CONFIG + "spec_tooltip_format.dat");
+
+        if (!f.exists())
+            Util.extract("/resources/spec_tooltip_format.dat", f);
+
         f = new File(Directories.CONFIG + "specializations.yml");
 
         if (!f.exists())
@@ -66,6 +71,11 @@ public class SolusRpg extends JavaPlugin {
 
         if (!f.exists())
             Util.extract("/resources/lib/beanshell-core.jar", f);
+
+        f = new File(Directories.CLASSES + "Classless.yml");
+
+        if (!f.exists())
+            Util.extract("/resources/Classless.yml", f);
 
         OutputFormatter.registerFormatter(new SimpleFormatter());
 

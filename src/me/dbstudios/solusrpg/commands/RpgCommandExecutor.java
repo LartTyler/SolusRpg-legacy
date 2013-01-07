@@ -23,6 +23,8 @@ public class RpgCommandExecutor implements CommandExecutor {
             return RpgListCommand.onCommand(sender, command, args);
         else if (args.length == 1 && args[0].equalsIgnoreCase("spec"))
             return RpgSpecCommand.onCommand(sender, command, args);
+        else if (args.length == 2 && args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("spawn"))
+            return RpgSetSpawnCommand.onCommand(sender, command, args);
 
 	return false;
     }

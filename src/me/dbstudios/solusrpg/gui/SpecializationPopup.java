@@ -19,125 +19,86 @@ import org.getspout.spoutapi.gui.*;
  * @author Tyler Lartonoix
  */
 public class SpecializationPopup extends GenericPopup {
-    private final RpgPlayer owner;
+    private final RpgPlayer player;
 
-    public SpecializationPopup(RpgPlayer owner) {
-        this.owner = owner;
+    public SpecializationPopup(RpgPlayer player) {
+        super();
 
-        Container c = new GenericContainer();
-        int screenWidth = owner.getBasePlayer().getMainScreen().getWidth(), screenHeight = owner.getBasePlayer().getMainScreen().getHeight();
+        this.player = player;
+        int leftOffset = 10;
 
-        c.setAnchor(WidgetAnchor.TOP_LEFT).setWidth(screenWidth - 20).setHeight(screenHeight - 20).setX(10).setY(10).setAutoDirty(true);
+        for (Specialization spec : SpecializationManager.getSpecializationCollection()) {
+            Container mc = new GenericContainer();
+            List<Specialization> specList = new ArrayList<>();
+            int deep = 0, wide = 0;
 
-        SolusRpg.log(Level.INFO, "Spec. tree container: width = {0}, height = {1}, x = {2}, y = {3}", c.getWidth(), c.getHeight(), c.getX(), c.getY());
+            specList.add(spec);
 
-        for (Specialization s : SpecializationManager.getSpecializationCollection())
-            c.addChild(buildTree(s));
+            while (specList != null && !specList.isEmpty()) {
+                List<Specialization> subSpecs = new ArrayList<>();
 
-        Widget[] children = c.getChildren();
+                wide = Math.max(wide, specList.size());
+                deep++;
 
-        for (int i = 0; i < children.length; i++)
-            if (i == 0)
-                children[i].setX(0);
-            else
-                children[i].setX(children[i - 1].getWidth() + 5);
+                for (Specialization s : specList)
+                    if (s.hasSubSpecialization())
+                        subSpecs.addAll(s.getSubSpecialization());
 
-        this.setWidth(screenWidth).setHeight(screenHeight).setX(0).setY(0).setAnchor(WidgetAnchor.TOP_LEFT);
-        this.attachWidget(SolusRpg.getInstance(), c);
-
-        SolusRpg.log(Level.INFO, "SpecializationPopup: width = {0}, height = {1}, x = {2}, y = {3}", this.getWidth(), this.getHeight(), this.getX(), this.getY());
-    }
-
-    private Container buildTree(Specialization rootSpec) {
-        SolusRpg.log(Level.INFO, "Building Spec. tree using root '{0}'.", rootSpec.getUniqueName());
-
-        Container mc = new GenericContainer();
-
-        mc.setAlign(WidgetAnchor.TOP_LEFT).setAutoDirty(true).setAnchor(WidgetAnchor.TOP_LEFT);
-
-        List<Specialization> specList = new ArrayList<>();
-
-        specList.add(rootSpec);
-
-        // We iterate through all sub-specializations before we build the GUI in order to determine the dimensions of the container.
-        // I hate to do it this way, but I can't think of any other way to solve this issue.
-        int deep = 0, wide = 0;
-
-        while (specList != null && !specList.isEmpty()) {
-            List<Specialization> nextDepth = new ArrayList<>();
-
-            for (Specialization spec : specList) {
-                if (spec.hasSubSpecialization())
-                    nextDepth.addAll(spec.getSubSpecialization());
+                if (!subSpecs.isEmpty())
+                    specList = subSpecs;
+                else
+                    specList = null;
             }
 
-            if (specList.size() > wide)
-                wide = specList.size();
+            mc.setAuto(false).setLayout(ContainerType.OVERLAY).setFixed(true).setWidth(wide * 36).setHeight(deep * 50).setX(leftOffset).setY(10);
+            leftOffset += mc.getWidth() + 10;
+            specList = new ArrayList<>();
 
-            deep++;
+            specList.add(spec);
 
-            if (!nextDepth.isEmpty())
-                specList = nextDepth;
-            else
-                specList = null;
-        }
+            int depth = 0;
 
-        SolusRpg.log(Level.INFO, "\t'{0}' tree found to be {1} deep and {2} wide.", rootSpec.getUniqueName(), deep, wide);
+            while (specList != null && !specList.isEmpty()) {
+                List<Specialization> subSpecs = new ArrayList<>();
+                int sectWidth = (int)Math.floor((double)mc.getWidth() / (double)specList.size()), pos = 1;
 
-        mc.setWidth(32 * wide + 5 * (wide - 1)).setHeight(48 * deep + 6 * (deep - 1)).setAnchor(WidgetAnchor.TOP_LEFT);
+                SolusRpg.log(Level.INFO, "Section width: {0}", sectWidth);
 
-        SolusRpg.log(Level.INFO, "\t'{0}' tree found to have a width of {1} and a height of {2}.", rootSpec.getUniqueName(), mc.getWidth(), mc.getHeight());
+                for (Specialization s : specList) {
+                    Container c = new GenericContainer();
 
-        int depth = 0;
+                    c.setAuto(false).setLayout(ContainerType.OVERLAY).setWidth(32).setHeight(42).setMarginLeft((int)Math.floor((pos * sectWidth) - (int)Math.floor((double)sectWidth / 2.0))).setMarginTop(50 * depth);
 
-        specList = new ArrayList<>();
+                    Gradient placeholder = new GenericGradient(new Color(80, 80, 80));
 
-        specList.add(rootSpec);
+                    placeholder.setFixed(true).setWidth(32).setHeight(32).setMargin(0).setTooltip(s.getTooltip(s.getLevel(player)));
 
-        while (specList != null && !specList.isEmpty()) {
-            List<Specialization> nextDepth = new ArrayList<>();
-            int sectionWidth = (int)Math.floor((double)mc.getWidth() / (double)specList.size());
-            int pos = 1;
+                    Label level = new GenericLabel(s.getLevel(this.player) + "/" + s.getMaxLevel());
 
-            SolusRpg.log(Level.INFO, "\tSection width found to be {0}.", sectionWidth);
+                    level.setScale(0.5f).setAuto(true).setFixed(true).setWidth(GenericLabel.getStringWidth(level.getText(), 0.5f)).setHeight(6).setMarginTop(26).setMarginLeft(30 - level.getWidth()).setPriority(RenderPriority.Low);
 
-            for (Specialization spec : specList) {
-                SolusRpg.log(Level.INFO, "\t\tAt leaf '{0}', pos {1}, depth {2}.", spec.getUniqueName(), pos, depth);
+                    Button levelUp = new LevelUpButton("Level Up", s, level, placeholder);
 
-                Container c = new GenericContainer();
-//                Texture image = new GenericTexture(spec.getIconPath());
-                Gradient g = new GenericGradient(new Color(0, 0, 0));
-                Label levelLabel = new GenericLabel(spec.getLevel(owner) + "/" + spec.getMaxLevel());
-                Button levelUpButton = new LevelUpButton("Level Up", spec, levelLabel);
+                    levelUp.setAuto(true).setFixed(true).setWidth(33).setHeight(10).setMarginTop(34);
 
-                c.setAnchor(WidgetAnchor.CENTER_CENTER).setWidth(32).setHeight(48).setX(((sectionWidth * pos) - (int)Math.floor((double)sectionWidth / 2.0)) + (5 * (pos - 1))).setY(54 * depth);
+                    c.addChildren(placeholder, level, levelUp);
+                    mc.addChild(c);
 
-                SolusRpg.log(Level.INFO, "\t\t\tPlacing Spec. container at x = {0} and y = {1}.", c.getX(), c.getY());
+                    if (s.hasSubSpecialization())
+                        subSpecs.addAll(s.getSubSpecialization());
 
-                c.addChildren(g, levelUpButton, levelLabel);
-//                image.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(32).setWidth(32).setX(0).setY(0);
-                g.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(32).setWidth(32).setX(0).setY(0);
-                levelUpButton.setAnchor(WidgetAnchor.TOP_LEFT).setHeight(8).setWidth(32).setX(0).setY(0);
-                levelLabel.setTextColor(new Color(255, 255, 255)).setShadow(true).setAlign(WidgetAnchor.TOP_RIGHT).setAnchor(WidgetAnchor.TOP_LEFT).setHeight(8).setWidth(30).setX(0)
-                        .setY(20).setAutoDirty(true).setPriority(RenderPriority.Low);
+                    pos++;
+                }
 
-//                c.addChildren(image, levelUpButton, levelLabel);
-                mc.addChild(c);
+                if (!subSpecs.isEmpty())
+                    specList = subSpecs;
+                else
+                    specList = null;
 
-                if (spec.hasSubSpecialization())
-                    nextDepth.addAll(spec.getSubSpecialization());
-
-                pos++;
+                depth++;
             }
 
-            depth++;
-
-            if (!nextDepth.isEmpty())
-                specList = nextDepth;
-            else
-                specList = null;
+            super.attachWidget(SolusRpg.getInstance(), mc);
         }
-
-        return mc;
     }
 }

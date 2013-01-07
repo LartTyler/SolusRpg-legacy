@@ -20,6 +20,6 @@ public class PermissionManager {
     }
 
     public static boolean hasPermission(CommandSender sender, String perm, boolean def) {
-        return sender.isOp() || permission.has(sender, perm) || def;
+        return sender.isOp() || permission.has(sender, "dbstudios.solusrpg." + perm) || def;
     }
 }

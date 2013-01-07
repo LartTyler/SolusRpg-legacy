@@ -27,9 +27,9 @@ public class ItemGroups {
                 List<Pattern> patterns = new ArrayList<>();
 
                 for (String item : items)
-                    patterns.add(Pattern.compile(item));
+                    patterns.add(Pattern.compile("(?i)^" + item + "$"));
 
-                groupList.put(key, Collections.unmodifiableList(patterns));
+                groupList.put(key.toLowerCase(), Collections.unmodifiableList(patterns));
             }
 
             groups = Collections.unmodifiableMap(groupList);

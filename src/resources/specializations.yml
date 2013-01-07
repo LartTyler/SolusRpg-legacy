@@ -18,6 +18,8 @@ combat:
     - level: 20
   unique-name: combat
   icon-path: http://dl.dropbox.com/<userid>/combat.png
+  description: Increase your overall effectiveness in combat.
+  name: Combat
   archer-training:
     effects:
       - permit:
@@ -37,15 +39,21 @@ combat:
           precision: 20
     requires:
       - level: 1
-        combat: 1
+        specialization:
+          combat: 1
       - level: 5
-        combat: 2
+        specialization:
+          combat: 2
       - level: 10
-        combat: 3
+        specialization:
+          combat: 3
       - level: 20
-        combat: 4
+        specialization:
+          combat: 4
     unique-name: combat.archer-training
     icon-path: http://dl.dropbox.com/<userid>/combat/archer-training.png
+    description: Increase your effectiveness as an archer.
+    name: Archer Training
   swordsman-training:
     effects:
       - permit:
@@ -62,12 +70,357 @@ combat:
             - DIAMOND_SWORD
     requires:
       - level: 1
-        combat: 1
+        specialization:
+          combat: 1
       - level: 5
-        combat: 2
+        specialization:
+          combat: 2
       - level: 10
-        combat: 3
+        specialization:
+          combat: 3
       - level: 20
-        combat: 4
+        specialization:
+          combat: 4
     unique-name: combat.swordsman-training
     icon-path: http://dl.dropbox.com/<userid>/combat/swordsman-training.png
+    description: Increase your effectiveness in close-quarters combat.
+    name: Swordsman Training
+  guardian-training:
+    effects:
+      - stat:
+          armor: 5
+          vitality: 10
+      - permit:
+          can-wear:
+            - IRON_ARMOR
+        stat:
+          armor: 10
+          vitality: 20
+      - permit:
+          can-wear:
+            - GOLD_ARMOR
+        stat:
+          armor: 20
+          aura: 10
+          vitality: 30
+      - permit:
+          can-wear:
+            - DIAMOND_ARMOR
+        stat:
+          armor: 30
+          aura: 20
+    requires:
+      - level: 1
+        specialization:
+          combat: 1
+      - level: 5
+        specialization:
+          combat: 2
+      - level: 10
+        specialization:
+          combat: 3
+      - level: 20
+        specialization:
+          combat: 4
+    unique-name: combat.guardian-training
+    icon-path: http://dl.dropbox.com/<userid>/combat/guardian-training.png
+    description: Increase your ability to absorb damage.
+    name: Guardian Training
+gathering:
+  effects:
+    - permit:
+        can-use:
+          - FISHING_ROD
+  requires:
+    - level: 1
+  unique-name: gathering
+  icon-path: http://dl.dropbox.com/<userid>/gathering.png
+  description: Increase your effectiveness in gathering basic materials.
+  name: Gathering
+  mining-specialization:
+    effects:
+      - permit:
+          can-break:
+            - STONE
+            - COBBLESTONE
+            - COAL_ORE
+            - STONE_STAIRS
+            - STONE_STEPS
+          can-place:
+            - STONE
+            - COBBLESTONE
+            - STONE_STAIRS
+            - STONE_STEPS
+          can-use:
+            - WOOD_PICKAXE
+            - STONE_PICKAXE
+            - SANDSTONE
+      - permit:
+          can-break:
+            - IRON_ORE
+            - ANVIL
+            - IRON_FENCE
+          can-place:
+            - ANVIL
+            - IRON_FENCE
+          can-use:
+            - IRON_PICKAXE
+      - permit:
+          can-break:
+            - GOLD_ORE
+          can-use:
+            - GOLD_PICKAXE
+      - permit:
+          can-break:
+            - IRON_BLOCK
+            - GOLD_BLOCK
+            - LAPIS_ORE
+            - LAPIS_BLOCK
+            - DIAMOND_BLOCK
+          can-place:
+            - IRON_BLOCK
+            - GOLD_BLOCK
+            - LAPIS_BLOCK
+            - DIAMOND_BLOCK
+      - permit:
+          can-break:
+            - DIAMOND_ORE
+            - OBSIDIAN
+          can-place:
+            - OBSIDIAN
+          can-use:
+            - DIAMOND_PICKAXE
+    requires:
+      - level: 1
+        specialization:
+          gathering: 1
+      - level: 5
+      - level: 10
+      - level: 15
+      - level: 20
+    unique-name: gathering.mining-specialization
+    icon-path: http://dl.dropbox.com/<userid>/gathering/mining-specialization.png
+    description: Increase your effectiveness in gathering earthen materials.
+    name: Mining Specialization
+  farming-specialization:
+    effects:
+      - permit:
+          can-place:
+            - CROPS
+            - SOIL
+          can-break:
+            - WHEAT
+            - SOIL
+            - CROPS
+          can-use:
+            - WOOD_HOE
+      - permit:
+          can-place:
+            - "@MELONS"
+            - "@MUSHROOMS"
+          can-break:
+            - "@MELONS"
+            - "@MUSHROOMS"
+          can-use:
+            - STONE_HOE
+      - permit:
+          can-place:
+            - "@SUGAR_CANE"
+            - POTATO
+          can-break:
+            - "@SUGAR_CANE"
+            - POTATO
+          can-craft:
+            - SUGAR
+          can-use:
+            - IRON_HOE
+      - permit:
+          can-place:
+            - CARROT
+          can-break:
+            - CARROT
+          can-use:
+            - GOLD_HOE
+      - permit:
+          can-place:
+            - "@PUMPKINS"
+          can-break:
+            - "@PUMPKINS"
+          can-craft:
+            - CAKE
+            - PUMPKIN_PIE
+          can-use:
+            - DIAMOND_HOE
+    requires:
+      - level: 1
+        specialization:
+          gathering: 1
+      - level: 5
+      - level: 10
+      - level: 15
+      - level: 20
+    unique-name: gathering.farming-specialization
+    icon-path: http://dl.dropbox.com/<userid>/gathering/farming-specialization.png
+    description: Increase your effectiveness in farming. "Feed yo' wife, feed yo' kids, 'cuz everyone's hungry up in here."
+    name: Farming Specialization
+  forestry-specialization:
+    effects:
+      - permit:
+          can-use:
+            - WOOD_AXE
+          can-place:
+            - "@LOGS"
+            - "@WOOD_PLANKS"
+          can-break:
+            - "@LOGS"
+            - "@WOOD_PLANKS"
+      - permit:
+          can-use:
+            - STONE_AXE
+      - permit:
+          can-use:
+            - IRON_AXE
+      - permit:
+          can-use:
+            - GOLD_AXE
+      - permit:
+          can-use:
+            - DIAMOND_AXE
+    requires:
+      - level: 1
+        specialization:
+          gathering: 1
+      - level: 5
+      - level: 10
+      - level: 15
+      - level: 20
+    unique-name: gathering.forestry-specialization
+    icon-path: http://dl.dropbox.com/<userid>/gathering/forestry-specialization.png
+    description: Increase your effectiveness in gathering wooden materials.
+    name: Forestry Specialization
+crafting:
+  effects:
+    - permit:
+        can-craft:
+          - PAPER
+          - "@BOOKS"
+          - "@WOOL"
+  requires:
+    - level: 1
+  unique-name: crafting
+  icon-path: http://dl.dropbox.com/<userid>/crafting.png
+  description: Increase your effectiveness in creating general materials.
+  name: Crafting
+  blacksmith-specialization:
+    effects:
+      - permit:
+          can-place:
+            - ANVIL
+            - IRON_FENCE
+          can-craft:
+            - ANVIL
+            - IRON_FENCE
+            - THIN_GLASS
+          can-smelt:
+            - IRON_ORE
+            - GOLD_ORE
+            - CLAY
+            - COBBLESTONE
+            - SAND
+      - permit:
+          can-craft:
+            - IRON_BLOCK
+            - GOLD_BLOCK
+            - LAPIS_BLOCK
+            - DIAMOND_BLOCK
+            - DIAMOND
+            - IRON_INGOT
+            - GOLD_INGOT
+            - LAPIS_LAZULI_DYE
+    requires:
+      - level: 1
+        specialization:
+          crafting: 1
+      - level: 5
+    unique-name: crafting.blacksmith-specialization
+    icon-path: http://dl.dropbox.com/<userid>/crafting/blacksmith-specialization.png
+    description: Increase your effectiveness in creating metal- and ore-based materials.
+    name: Blacksmith Specialization
+    armorsmith-specialization:
+      effects:
+        - permit:
+            can-craft:
+              - "@LEATHER_ARMOR"
+        - permit:
+            can-craft:
+              - "@IRON_ARMOR"
+              - "@CHAINMAIL_ARMOR"
+        - permit:
+            can-craft:
+              - "@GOLD_ARMOR"
+        - permit:
+            can-craft:
+              - "@DIAMOND_ARMOR"
+      requires:
+        - level: 1
+          specialization:
+            crafting.blacksmith-specialization: 1
+        - level: 5
+        - level: 10
+        - level: 20
+      unique-name: crafting.blacksmith-specialization.armorsmith-specialization
+      icon-path: http://dl.dropbox.com/<userid>/crafting/blacksmith-specialization/armorsmith-specialization.png
+      description: Increase your effectiveness in creating various armors.
+      name: Armorsmith Specialization
+  carpentry-specialization:
+    effects:
+      - permit:
+          can-place:
+            - "@WOOD_STAIRS"
+            - "@WOOD_STEPS"
+            - LADDER
+            - CHEST
+            - ^FENCE
+            - FENCE_GATE
+            - "@WOOD_PLANKS"
+            - WOOD_DOOR
+            - TRAP_DOOR
+          can-break:
+            - "@WOOD_STAIRS"
+            - "@WOOD_STEPS"
+            - LADDER
+            - CHEST
+            - ^FENCE
+            - FENCE_GATE
+            - "@WOOD_PLANKS"
+            - WOOD_DOOR
+            - TRAP_DOOR
+          can-craft:
+            - "@WOOD_STAIRS"
+            - "@WOOD_STEPS"
+            - LADDER
+            - CHEST
+            - FENCE
+            - FENCE_GATE
+            - "@WOOD_PLANKS"
+            - WOOD_DOOR
+            - TRAP_DOOR
+            - BOAT
+            - WOOD_SWORD
+            - BOW
+            - ARROW
+            - "@SIGNS"
+            - BED
+      - permit:
+          can-craft:
+            - PAINTING
+            - ITEM_FRAME
+    requires:
+      - level: 1
+        specialization:
+          crafting: 1
+      - level: 5
+    unique-name: crafting.carpentry-specialization
+    icon-path: http://dl.dropbox.com/<userid>/crafting/carpentry-specialization.png
+    description: Increase your effectiveness in creating wooden materials.
+    name: Carpentry Specialization

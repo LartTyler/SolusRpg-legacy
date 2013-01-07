@@ -60,7 +60,7 @@ public class RpgModifyCommand {
                         return false;
 
                     try {
-                        Scanner s = new Scanner(new File(Directories.CONFIG + "player_info_format.dat"));
+                        Scanner s = new Scanner(new File(Directories.CONFIG + "modify_result_format.dat"));
 
                         Map<String, String> arguments = new HashMap<>();
 
@@ -74,7 +74,7 @@ public class RpgModifyCommand {
                                 Util.sendMessage(sender, lineSplit[0].replace("\\#", "#"), arguments);
                         }
                     } catch (IOException e) {
-                        SolusRpg.log(Level.WARNING, "Could not locate file: " + Directories.CONFIG + "player_info_format.dat");
+                        SolusRpg.log(Level.WARNING, "Could not locate file: " + Directories.CONFIG + "modify_result_format.dat");
                         Util.sendMessage(sender, "{red}An error occurred while attempting to execute your command.", null);
                     }
                 } else {

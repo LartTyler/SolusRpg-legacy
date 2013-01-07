@@ -21,4 +21,7 @@ public interface Specialization {
     public Map<String, Integer> getRequiredSpecializations(int level);
     public int getLevel(RpgPlayer player);
     public int getMaxLevel();
+    public String getDescription();
+    public String getTooltip(int level);
+    public String getName();
 }
