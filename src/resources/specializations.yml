@@ -1,0 +1,73 @@
+combat:
+  effects:
+    - stat:
+        strength: 5
+    - stat:
+        strength: 10
+        vitality: 5
+    - stat:
+        strength: 15
+        vitality: 10
+    - stat:
+        strength: 20
+        vitality: 30
+  requires:
+    - level: 1
+    - level: 5
+    - level: 10
+    - level: 20
+  unique-name: combat
+  icon-path: http://dl.dropbox.com/<userid>/combat.png
+  archer-training:
+    effects:
+      - permit:
+          can-use:
+            - BOW
+        stat:
+          precision: 5
+      - permit:
+          can-craft:
+            - ARROW
+            - BOW
+        stat:
+          precision: 10
+      - stat:
+          precision: 15
+      - stat:
+          precision: 20
+    requires:
+      - level: 1
+        combat: 1
+      - level: 5
+        combat: 2
+      - level: 10
+        combat: 3
+      - level: 20
+        combat: 4
+    unique-name: combat.archer-training
+    icon-path: http://dl.dropbox.com/<userid>/combat/archer-training.png
+  swordsman-training:
+    effects:
+      - permit:
+          can-use:
+            - STONE_SWORD
+      - permit:
+          can-use:
+            - IRON_SWORD
+      - permit:
+          can-use:
+            - GOLD_SWORD
+      - permit:
+          can-use:
+            - DIAMOND_SWORD
+    requires:
+      - level: 1
+        combat: 1
+      - level: 5
+        combat: 2
+      - level: 10
+        combat: 3
+      - level: 20
+        combat: 4
+    unique-name: combat.swordsman-training
+    icon-path: http://dl.dropbox.com/<userid>/combat/swordsman-training.png

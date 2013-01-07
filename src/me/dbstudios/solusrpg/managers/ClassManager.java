@@ -2,11 +2,9 @@
 package me.dbstudios.solusrpg.managers;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.conf.RpgClass;
 import me.dbstudios.solusrpg.exceptions.RpgClassConfigException;
@@ -19,7 +17,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * @author Tyler Lartonoix
  */
 public class ClassManager {
-    private final static Map<String, RpgClass> classes;
+    private static final Map<String, RpgClass> classes;
+
+    public static final RpgClass DEFAULT_CLASS;
 
     static {
         File f = new File(Directories.CONFIG + "config.yml");
@@ -40,9 +40,21 @@ public class ClassManager {
             }
 
             classes = Collections.unmodifiableMap(cls);
+	    DEFAULT_CLASS = classes.get(conf.getString("config.default-class"));
         } else {
             classes = Collections.unmodifiableMap(new HashMap<String, RpgClass>());
+	    DEFAULT_CLASS = null;
         }
+    }
+
+    public static List<RpgClass> matchClass(String search) {
+        List<RpgClass> matches = new ArrayList<>();
+
+        for (RpgClass cl : classes.values())
+            if (Pattern.compile("(?i)^" + search).matcher(cl.getName()).find() || Pattern.compile("(?i)^" + search).matcher(cl.getSystemName()).find())
+                matches.add(cl);
+
+        return matches;
     }
 
     public static boolean exists(String cl) {
@@ -51,5 +63,13 @@ public class ClassManager {
 
     public static RpgClass getClass(String cl) {
         return classes.get(cl);
+    }
+
+    public static Collection<RpgClass> getClasses() {
+        return classes.values();
+    }
+
+    public static int size() {
+	return classes.size();
     }
 }

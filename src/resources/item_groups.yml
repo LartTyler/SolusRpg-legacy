@@ -1,0 +1,21 @@
+groups:
+  COMMON_ITEMS:
+    - DIRT
+    - GRASS
+    - TALL_GRASS
+    - DEAD_SHRUB
+    - FERN
+    - .*_WOOL
+    - .*_DYE
+    - .*_LOG
+    - .*_WOOD
+    - .*_LEAVES
+    - .*_SAPLING
+    - COBBLESTONE
+    - SAND
+    - WATER_LILY
+    - (WALL_)?SIGN(_POST)?
+    - VINE
+    - FISTS
+  WOOD_TOOLS:
+    - WOOD_((PICK)?AXE|HOE|SPADE)

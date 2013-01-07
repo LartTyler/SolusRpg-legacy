@@ -45,4 +45,8 @@ public class ItemGroups {
     public static List<Pattern> getGroup(String group) {
         return groups.get(group);
     }
+
+    public static int size() {
+        return groups.size();
+    }
 }

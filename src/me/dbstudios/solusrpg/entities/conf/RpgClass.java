@@ -16,9 +16,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class RpgClass {
     private final Map<PermitNode, List<Pattern>> permitNodes;
+    private final Map<StatType, Stat> stats;
     private final String systemName;
     private final String name;
     private final String bio;
+    private final boolean privateClass;
 
     public RpgClass(String systemName) throws RpgClassConfigException {
         File f = new File(Directories.CLASSES + systemName + ".yml");
@@ -39,8 +41,8 @@ public class RpgClass {
             List<Pattern> patterns = new ArrayList<>();
 
             for (String item : Util.toTypedList(conf.getList("class." + node, null), String.class))
-                if (item.charAt(0) == RpgConstants.ITEM_GROUP_IDENTIFIER && ItemGroups.groupExists(item.substring(1)))
-                    patterns.addAll(ItemGroups.getGroup(item.substring(1)));
+                if (item.charAt(0) == RpgConstants.ITEM_GROUP_IDENTIFIER && ItemGroups.groupExists(item.substring(1).toLowerCase()))
+                    patterns.addAll(ItemGroups.getGroup(item.substring(1).toLowerCase()));
                 else
                     patterns.add(Pattern.compile(item));
 
@@ -48,6 +50,14 @@ public class RpgClass {
         }
 
         this.permitNodes = Collections.unmodifiableMap(nodes);
+
+	Map<StatType, Stat> statMap = new EnumMap<>(StatType.class);
+
+	for (StatType t : StatType.values())
+	    statMap.put(t, new Stat(conf, t, "class.stats"));
+
+	this.stats = Collections.unmodifiableMap(statMap);
+        this.privateClass = conf.getBoolean("class.private", false);
     }
 
     public String getSystemName() {
@@ -68,5 +78,17 @@ public class RpgClass {
                 return true;
 
         return false;
+    }
+
+    public Stat getStat(StatType type) {
+	return this.stats.get(type);
+    }
+
+    public FileConfiguration getConfiguration() {
+        return YamlConfiguration.loadConfiguration(new File(Directories.CLASSES + this.systemName + ".yml"));
+    }
+
+    public boolean isPrivate() {
+        return this.privateClass;
     }
 }

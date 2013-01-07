@@ -1,3 +1,28 @@
 config:
+  phrases:
+    player:
+      use-deny: "{aqua}Your class ({green}{class}) {aqua}cannot use {green}{item}{aqua}."
+      break-deny: "{aqua}Your class ({green}{class}{aqua}) cannot break {green}{item}{aqua}."
+      place-deny: "{aqua}Your class ({green}{class}{aqua}) cannot place {green}{item}{aqua}."
+      wear-deny: "{aqua}Your class ({green}{class}{aqua}) cannot wear {green}{item}{aqua}."
+      wear-deny-drop: "{aqua}Your inventory was full, so {green}{item}{aqua} was dropped."
+      craft-deny: "{aqua}Your class ({green}{class}{aqua}) cannot craft {green}{item}{aqua}."
+      smelt-deny: "{aqua}Your class ({green}{class}{aqua}) cannot smelt {green}{item}{aqua}."
+      no-damage: "{aqua}Your blows fail to damage {green}{target}{aqua}."
+  leveling:
+    level-cap: -1
+    experience-algorithm: "50 * {level}"
+    skill-points: 10
+  default-class: Classless
   classes:
     - Classless
+  defaults:
+    stats:
+      strength: 5
+      magic: 5
+      armor: 2
+      aura: 1
+      vitality: 50
+      precision: 5
+      health:
+        name: Health

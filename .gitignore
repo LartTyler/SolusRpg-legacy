@@ -1,2 +1,9 @@
+<<<<<<< HEAD
 /nbproject/private/
 .DS_STORE
+=======
+/nbproject/private/
+/dist/
+/build/
+.DS_STORE
+>>>>>>> v3-working
