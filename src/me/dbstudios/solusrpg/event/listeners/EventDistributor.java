@@ -101,19 +101,6 @@ public class EventDistributor implements Listener {
 	    ev.setCancelled(event.isCancelled());
 	    ev.setDamage(event.getDamage());
 	}
-
-        /*
-        // Modify the damage dealt to scale to the increased health potentially provided by Solus
-        if (!ev.isCancelled() && ev.getDamage() > 0 && ev.getEntity() instanceof Player) {
-            RpgPlayer player = PlayerManager.get((Player)ev.getEntity());
-            int trueHealth = (int)Math.ceil(20.0 * (player.getHealth() / player.getMaxHealth()));
-
-            // This value has the potential to be zero. This could possibly cause conflicts further down the road for other plugins...
-            // See postEntityDamageByEntity
-            ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
-            player.setHealth(player.getHealth() - ev.getDamage());
-        }
-        */
     }
 
     // This is the more desireable way to modify the damage a player will take. Since HIGHEST priority occurs last, this would allow any damage the player takes via the event
