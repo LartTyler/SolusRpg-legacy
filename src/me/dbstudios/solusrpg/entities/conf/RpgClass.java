@@ -44,7 +44,10 @@ public class RpgClass {
                 if (item.charAt(0) == RpgConstants.ITEM_GROUP_IDENTIFIER && ItemGroups.groupExists(item.substring(1).toLowerCase()))
                     patterns.addAll(ItemGroups.getGroup(item.substring(1).toLowerCase()));
                 else
-                    patterns.add(Pattern.compile("(?i)^" + item + "$"));
+                    if (item.startsWith("(?i)^"))
+                        patterns.add(Pattern.compile("(?i)^" + item + "$"));
+                    else
+                        patterns.add(Pattern.compile(item));
 
             nodes.put(node, patterns);
         }

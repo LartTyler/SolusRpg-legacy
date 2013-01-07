@@ -27,7 +27,10 @@ public class ItemGroups {
                 List<Pattern> patterns = new ArrayList<>();
 
                 for (String item : items)
-                    patterns.add(Pattern.compile("(?i)^" + item + "$"));
+                    if (item.startsWith("(?i)^"))
+                        patterns.add(Pattern.compile("(?i)^" + item + "$"));
+                    else
+                        patterns.add(Pattern.compile(item));
 
                 groupList.put(key.toLowerCase(), Collections.unmodifiableList(patterns));
             }
