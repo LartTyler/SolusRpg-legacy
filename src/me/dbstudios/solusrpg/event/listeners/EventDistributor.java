@@ -5,13 +5,10 @@
 
 package me.dbstudios.solusrpg.event.listeners;
 
-import java.util.logging.Level;
-import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.player.*;
-import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.DamageType;
 import org.bukkit.Bukkit;
