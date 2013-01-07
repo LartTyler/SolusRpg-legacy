@@ -20,13 +20,15 @@ import org.getspout.spoutapi.gui.Widget;
 public class LevelUpButton extends GenericButton {
     private final Specialization spec;
     private final Label levelLabel;
+    private final Label skillPointsLabel;
     private final Widget icon;
 
-    public LevelUpButton(String text, Specialization spec, Label levelLabel, Widget icon) {
+    public LevelUpButton(String text, Specialization spec, Label levelLabel, Label skillPointsLabel, Widget icon) {
         super(text);
 
         this.spec = spec;
         this.levelLabel = levelLabel;
+        this.skillPointsLabel = skillPointsLabel;
         this.icon = icon;
     }
 
@@ -40,6 +42,7 @@ public class LevelUpButton extends GenericButton {
             clicker.removeSkillPoints(1);
 
             levelLabel.setText((specLevel + 1) + "/" + spec.getMaxLevel()).setDirty(true);
+            skillPointsLabel.setText("Available skill points: " + clicker.getSkillPoints()).setDirty(true);
             icon.setTooltip(spec.getTooltip(specLevel + 1));
         } else {
             ev.setCancelled(true);

@@ -24,6 +24,12 @@ public class SpecializationPopup extends GenericPopup {
     public SpecializationPopup(RpgPlayer player) {
         super();
 
+        Label skillPointsLabel = new GenericLabel("Available skill points: " + player.getSkillPoints());
+
+        skillPointsLabel.setScale(0.75f).setFixed(true).setX(10).setY(2).setHeight(8);
+
+        super.attachWidget(SolusRpg.getInstance(), skillPointsLabel);
+
         this.player = player;
         int leftOffset = 10;
 
@@ -77,7 +83,7 @@ public class SpecializationPopup extends GenericPopup {
 
                     level.setScale(0.5f).setAuto(true).setFixed(true).setWidth(GenericLabel.getStringWidth(level.getText(), 0.5f)).setHeight(6).setMarginTop(26).setMarginLeft(30 - level.getWidth()).setPriority(RenderPriority.Low);
 
-                    Button levelUp = new LevelUpButton("Level Up", s, level, placeholder);
+                    Button levelUp = new LevelUpButton("Level Up", s, level, skillPointsLabel, placeholder);
 
                     levelUp.setAuto(true).setFixed(true).setWidth(33).setHeight(10).setMarginTop(34);
 
