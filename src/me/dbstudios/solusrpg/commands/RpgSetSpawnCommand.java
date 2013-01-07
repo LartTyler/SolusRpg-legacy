@@ -41,7 +41,7 @@ public class RpgSetSpawnCommand {
                 SolusRpg.log(Level.WARNING, "Could not save spawn point.");
             }
 
-            Util.sendMessage(sender, "Spawn point updated to your current location.");
+            Util.sendMessage(sender, "{aqua}Spawn point updated to your current location.");
         }
 
         return true;
