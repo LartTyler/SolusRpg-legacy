@@ -25,6 +25,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
@@ -42,6 +43,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
     private int level = 0;
     private int exp = 0;
     private int skillPoints = -1;
+    private InventoryType activeInventoryType = null;
 
     private RpgClass rpgClass;
 
@@ -482,5 +484,15 @@ public class RpgPlayer implements Metadatable<String, Object> {
         }
 
         return true;
+    }
+
+    public InventoryType getActiveInventoryType() {
+        return this.activeInventoryType;
+    }
+
+    public RpgPlayer setActiveInventoryType(InventoryType activeInventoryType) {
+        this.activeInventoryType = activeInventoryType;
+
+        return this;
     }
 }
