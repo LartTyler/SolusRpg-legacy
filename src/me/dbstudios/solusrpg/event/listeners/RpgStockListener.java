@@ -5,8 +5,10 @@
 
 package me.dbstudios.solusrpg.event.listeners;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.StatType;
@@ -16,7 +18,12 @@ import me.dbstudios.solusrpg.event.player.*;
 import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
+import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Util;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,6 +36,14 @@ public class RpgStockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerQuit(RpgPlayerQuitEvent ev) {
         PlayerManager.remove(ev.getPlayer().getBasePlayer());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onRpgPlayerJoin(RpgPlayerJoinEvent ev) {
+        FileConfiguration conf = YamlConfiguration.loadConfiguration(new File(Directories.DATA + "config.yml"));
+
+        if (conf.isConfigurationSection("config.spawn") && ev.getPlayer().getBasePlayer().hasPlayedBefore())
+            ev.getPlayer().getBasePlayer().teleport(new Location(Bukkit.getWorld(conf.getString("config.spawn.world")), conf.getDouble("config.spawn.x"), conf.getDouble("config.spawn.y"), conf.getDouble("config.spawn.z"), (float)conf.getDouble("config.spawn.yaw"), (float)conf.getDouble("config.spawn.pitch")));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -248,6 +263,19 @@ public class RpgStockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerSpawn(RpgPlayerSpawnEvent ev) {
         ev.getPlayer().setHealth(ev.getPlayer().getMaxHealth());
+
+        final RpgPlayer player = ev.getPlayer();
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(SolusRpg.getInstance(), new Runnable() {
+            public void run() {
+                player.addExp(0);
+            }
+        }, 5);
+
+        FileConfiguration conf = YamlConfiguration.loadConfiguration(new File(Directories.DATA + "config.yml"));
+
+        if (conf.isConfigurationSection("config.spawn"))
+            ev.setSpawnLocation(new Location(Bukkit.getWorld(conf.getString("config.spawn.world")), conf.getDouble("config.spawn.x"), conf.getDouble("config.spawn.y"), conf.getDouble("config.spawn.z"), (float)conf.getDouble("config.spawn.yaw"), (float)conf.getDouble("config.spawn.pitch")));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

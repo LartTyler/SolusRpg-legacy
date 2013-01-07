@@ -14,7 +14,6 @@ import org.bukkit.configuration.file.FileConfiguration;
  */
 public abstract class RpgMeter implements Meter<RpgPlayer, Integer> {
     private final RpgPlayer owner;
-    private final int max;
     private final String name;
 
     private int value;
@@ -22,7 +21,6 @@ public abstract class RpgMeter implements Meter<RpgPlayer, Integer> {
     public RpgMeter(RpgPlayer owner, FileConfiguration conf) {
        this.owner = owner;
        this.name = conf.getString("class.stats.health.name", "Unnamed Meter");
-       this.max = conf.getInt("class.stats.vitality", 20);
     }
 
     public Integer getValue() {
@@ -30,7 +28,7 @@ public abstract class RpgMeter implements Meter<RpgPlayer, Integer> {
     }
 
     public Integer getMaxValue() {
-        return this.max;
+        return owner.getStat(StatType.VITALITY).getValue();
     }
 
     public void setValue(Integer value) {
@@ -46,7 +44,7 @@ public abstract class RpgMeter implements Meter<RpgPlayer, Integer> {
     }
 
     public void add(Integer amount) {
-        this.value = Math.min(this.value + amount, max);
+        this.value = Math.min(this.value + amount, this.getMaxValue());
     }
 
     public void remove(Integer amount) {

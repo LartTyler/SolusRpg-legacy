@@ -36,6 +36,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
     private final Map<StatType, Stat> stats;
     private final RpgHealthMeter health;
     private final Map<String, Object> metadata = new HashMap<>();
+    private final boolean firstTime;
 
     private Map<PermitNode, List<Pattern>> permitNodes = new EnumMap<>(PermitNode.class);
     private int level = 0;
@@ -48,6 +49,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
         this.basePlayer = SpoutManager.getPlayer(p);
 
 	File f = new File(Directories.DATA + p.getName().substring(0, 2).toLowerCase() + File.separator + p.getName().toLowerCase() + ".yml");
+        boolean ft = false;
 
 	if (!f.exists()) {
 	    (new File(Directories.DATA + p.getName().substring(0, 2).toLowerCase() + File.separator)).mkdirs();
@@ -59,7 +61,13 @@ public class RpgPlayer implements Metadatable<String, Object> {
 	    }
 
             this.skillPoints = LevelManager.getSkillPointsPerLevel();
+            this.level = LevelManager.getStartingLevel();
+            basePlayer.setLevel(LevelManager.getStartingLevel());
+
+            ft = true;
 	}
+
+        this.firstTime = ft;
 
 	FileConfiguration conf = YamlConfiguration.loadConfiguration(f);
 	String cl = conf.getString("player.class", null);
@@ -82,16 +90,30 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
         if (s != null)
             for (String k : s.getKeys(false))
-                metadata.put(k.replace('_', '.'), s.getString(k));
+                metadata.put(k.replace('_', '.'), s.get(k));
 
-        this.level = conf.getInt("player.level", 0);
+        this.level = conf.getInt("player.level", LevelManager.getStartingLevel());
         this.exp = conf.getInt("player.experience", 0);
 
         if (this.skillPoints == -1)
             this.skillPoints = conf.getInt("player.skill-points", 0);
 
-        for (PermitNode n : PermitNode.values())
-            permitNodes.get(n).addAll(Util.toTypedList(conf.getList("player.permit-nodes." + n, null), Pattern.class));
+        for (PermitNode n : PermitNode.values()) {
+            List<Pattern> patterns = new ArrayList<>();
+
+            for (String pattern : Util.toTypedList(conf.getList("player.permit-nodes." + n.getNode(), null), String.class))
+                if (!pattern.startsWith("(?i)^"))
+                    patterns.add(Pattern.compile("(?i)^" + pattern + "$"));
+
+            permitNodes.put(n, patterns);
+        }
+
+        basePlayer.setDisplayName(conf.getString("player.name", null) != null ? conf.getString("player.name") : basePlayer.getName());
+        basePlayer.setTitle(conf.getString("player.name", null) != null ? conf.getString("player.name") : basePlayer.getName());
+    }
+
+    public boolean isFirstSession() {
+        return this.firstTime;
     }
 
     public String getName() {
@@ -159,6 +181,9 @@ public class RpgPlayer implements Metadatable<String, Object> {
     }
 
     public boolean isAllowed(PermitNode node, String item) {
+        if (basePlayer.isOp())
+            return true;
+
         for (Pattern p : permitNodes.get(node))
             if (p.matcher(item).find())
                 return true;
@@ -269,9 +294,16 @@ public class RpgPlayer implements Metadatable<String, Object> {
         conf.set("player.level", this.level);
         conf.set("player.experience", this.exp);
         conf.set("player.skill-points", this.skillPoints);
+        conf.set("player.name", basePlayer.getDisplayName());
 
-        for (PermitNode key : permitNodes.keySet())
-            conf.set("player.permit-nodes." + key, permitNodes.get(key));
+        for (PermitNode key : permitNodes.keySet()) {
+            List<String> patterns = new ArrayList<>();
+
+            for (Pattern p : permitNodes.get(key))
+                patterns.add(p.pattern());
+
+            conf.set("player.permit-nodes." + key.getNode(), patterns);
+        }
 
         try {
             conf.save(f);
@@ -324,7 +356,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
         int toLevel = LevelManager.getExpToLevel(this.level + 1);
 
-        if (toLevel <= this.exp) {
+        if (toLevel <= this.exp)
             while (toLevel <= this.exp) {
                 this.exp -= toLevel;
                 this.level++;
@@ -332,7 +364,6 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
                 toLevel = LevelManager.getExpToLevel(this.level + 1);
             }
-        }
 
         this.basePlayer.setLevel(this.level);
         this.basePlayer.setExp((float)((double)this.exp / (double)toLevel));
@@ -431,7 +462,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
 //            }
 
         if (node.equalsIgnoreCase("name")) {
-            this.setDisplayName(val != null ? val : this.getName());
+            this.setDisplayName(val != null ? val : this.getName()).setTitle(val != null ? val : this.getName());
 
             return true;
         }

@@ -1,0 +1,7 @@
+{green}{name}
+{aqua}---------------------------
+{green}{description}
+{aqua}Effects:
+{green}  {effects}
+{aqua}Next Level:
+{gold}  {next-effects}
