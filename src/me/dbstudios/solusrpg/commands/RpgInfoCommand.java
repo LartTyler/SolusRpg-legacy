@@ -56,6 +56,10 @@ public class RpgInfoCommand {
                     arguments.put("level", target.getLevel() + "");
                     arguments.put("experience", target.getExp() + "");
                     arguments.put("experience-to-level", LevelManager.getExpToLevel(target.getLevel() + 1) + "");
+                    arguments.put("skill-points", target.getSkillPoints() + "");
+
+                    for (StatType t : StatType.values())
+                        arguments.put(t.toString(), target.getStat(t).getValue() + "");
 
                     while (s.hasNextLine()) {
                         String[] lineSplit = s.nextLine().split("[^\\\\]#");
