@@ -261,14 +261,6 @@ public class EventDistributor implements Listener {
             RpgPlayer player = PlayerManager.get(ev.getPlayer());
 
             player.addExp(ev.getAmount());
-//            float exp = 0f;
-//
-//            if (player.getExp() < ev.getAmount())
-//                exp = 1f;
-//
-//            exp += (float)((double)player.getExp() / (double)LevelManager.getExpToLevel(player.getLevel()));
-//
-//            player.getBasePlayer().setExp(exp);
             ev.setAmount(0);
         }
     }
