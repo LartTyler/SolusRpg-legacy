@@ -8,6 +8,10 @@ package me.dbstudios.solusrpg.event.listeners;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
+import me.dbstudios.solusrpg.event.inventory.RpgCraftItemEvent;
+import me.dbstudios.solusrpg.event.inventory.RpgInventoryClickEvent;
+import me.dbstudios.solusrpg.event.inventory.RpgInventoryCloseEvent;
+import me.dbstudios.solusrpg.event.inventory.RpgInventoryOpenEvent;
 import me.dbstudios.solusrpg.event.player.*;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.DamageType;
@@ -21,6 +25,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 
 /**
@@ -263,5 +271,43 @@ public class EventDistributor implements Listener {
             player.addExp(ev.getAmount());
             ev.setAmount(0);
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onIventoryOpen(InventoryOpenEvent ev) {
+        RpgInventoryOpenEvent event = new RpgInventoryOpenEvent(ev.getView());
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        ev.setCancelled(event.isCancelled());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClose(InventoryCloseEvent ev) {
+        RpgInventoryCloseEvent event = new RpgInventoryCloseEvent(ev.getView());
+
+        Bukkit.getPluginManager().callEvent(event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onCraftItem(CraftItemEvent ev) {
+        RpgCraftItemEvent event = new RpgCraftItemEvent(ev.getView(), ev.getSlotType(), ev.getRawSlot(), ev.isRightClick(), ev.isShiftClick(), ev.getRecipe());
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        ev.setCancelled(event.isCancelled());
+        ev.setCursor(event.getCursor());
+        ev.setCurrentItem(event.getItem());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClick(InventoryClickEvent ev) {
+        RpgInventoryClickEvent event = new RpgInventoryClickEvent(ev.getView(), ev.getSlotType(), ev.getRawSlot(), ev.isRightClick(), ev.isShiftClick());
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        ev.setCancelled(event.isCancelled());
+        ev.setCurrentItem(event.getItem());
+        ev.setCursor(event.getCursor());
     }
 }
