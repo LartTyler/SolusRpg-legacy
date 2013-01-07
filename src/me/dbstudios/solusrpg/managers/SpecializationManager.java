@@ -3,8 +3,6 @@ package me.dbstudios.solusrpg.managers;
 
 import java.io.File;
 import java.util.*;
-import java.util.logging.Level;
-import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.player.specialization.RpgSpecialization;
 import me.dbstudios.solusrpg.player.specialization.Specialization;
 import me.dbstudios.solusrpg.util.Directories;
