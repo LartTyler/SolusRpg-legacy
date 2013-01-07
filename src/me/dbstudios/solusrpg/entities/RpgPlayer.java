@@ -106,6 +106,8 @@ public class RpgPlayer implements Metadatable<String, Object> {
             for (String pattern : Util.toTypedList(conf.getList("player.permit-nodes." + n.getNode(), null), String.class))
                 if (!pattern.startsWith("(?i)^"))
                     patterns.add(Pattern.compile("(?i)^" + pattern + "$"));
+                else
+                    patterns.add(Pattern.compile(pattern));
 
             permitNodes.put(n, patterns);
         }
@@ -187,8 +189,10 @@ public class RpgPlayer implements Metadatable<String, Object> {
             return true;
 
         for (Pattern p : permitNodes.get(node))
-            if (p.matcher(item).find())
+            if (p.matcher("All").find() || p.matcher(item).find())
                 return true;
+            else if (p.matcher("Nothing").find())
+                return false;
 
 	return rpgClass.isAllowed(node, item);
     }
