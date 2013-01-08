@@ -1,6 +1,6 @@
 name: SolusRpg
-version: 4.0
-description: The multi-purpose RP and player management plugin
+version: 3.1
+description: The MMO-styled, multi-purpose RP and player management plugin
 author: LartTyler / Daybreak Studios
 main: me.dbstudios.solusrpg.SolusRpg
 depend: [Spout, Vault]
