@@ -307,7 +307,5 @@ public class EventDistributor implements Listener {
         Bukkit.getPluginManager().callEvent(event);
 
         ev.setCancelled(event.isCancelled());
-        ev.setCurrentItem(event.getItem());
-        ev.setCursor(event.getCursor());
     }
 }
