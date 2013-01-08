@@ -62,8 +62,8 @@ public class RpgPlayer implements Metadatable<String, Object> {
 		throw new RpgPlayerConfigException("Could not create player data file.");
 	    }
 
-            this.skillPoints = LevelManager.getSkillPointsPerLevel();
             this.level = LevelManager.getStartingLevel();
+            this.skillPoints = LevelManager.getSkillPointsPerLevel() * this.level;
             basePlayer.setLevel(LevelManager.getStartingLevel());
 
             ft = true;
