@@ -38,6 +38,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
     private final RpgHealthMeter health;
     private final Map<String, Object> metadata = new HashMap<>();
     private final boolean firstTime;
+    private final long joinedTimestamp;
 
     private Map<PermitNode, List<Pattern>> permitNodes = new EnumMap<>(PermitNode.class);
     private int level = 0;
@@ -48,6 +49,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
     private RpgClass rpgClass;
 
     public RpgPlayer(Player p) throws RpgPlayerConfigException {
+        this.joinedTimestamp = System.currentTimeMillis();
         this.basePlayer = SpoutManager.getPlayer(p);
 
 	File f = new File(Directories.DATA + p.getName().substring(0, 2).toLowerCase() + File.separator + p.getName().toLowerCase() + ".yml");
@@ -498,5 +500,13 @@ public class RpgPlayer implements Metadatable<String, Object> {
         this.activeInventoryType = activeInventoryType;
 
         return this;
+    }
+
+    public long getSessionDuration() {
+        return System.currentTimeMillis() - this.joinedTimestamp;
+    }
+
+    public boolean hasPlayedBefore() {
+        return basePlayer.hasPlayedBefore();
     }
 }
