@@ -25,14 +25,14 @@ public class LevelManager {
         if (f.exists()) {
             FileConfiguration conf = YamlConfiguration.loadConfiguration(f);
 
-            levelCap = conf.getInt("config.leveling.level-cap", -1);
-            expAlgorithm = conf.getString("config.leveling.experience-algorithm", "50 * {level}");
-            skillPointsPerLevel = conf.getInt("config.level.skill-points", 10);
+            levelCap = conf.getInt("config.leveling.level-cap", 20);
+            expAlgorithm = conf.getString("config.leveling.experience-algorithm", "50 * ({level} - 1)");
+            skillPointsPerLevel = conf.getInt("config.level.skill-points", 1);
             startingLevel = conf.getInt("config.level.starting-level", 1);
         } else {
-            levelCap = -1;
-            expAlgorithm = "50 * {level}";
-            skillPointsPerLevel = 10;
+            levelCap = 20;
+            expAlgorithm = "50 * ({level} - 1)";
+            skillPointsPerLevel = 1;
             startingLevel = 1;
         }
     }
@@ -61,7 +61,7 @@ public class LevelManager {
 
         if (rawToLevel == null)
             try {
-                rawToLevel = i.eval("50 * " + level);
+                rawToLevel = i.eval("50 * (" + level + " - 1)");
             } catch (EvalError e) {}
 
         return (Integer)rawToLevel;
