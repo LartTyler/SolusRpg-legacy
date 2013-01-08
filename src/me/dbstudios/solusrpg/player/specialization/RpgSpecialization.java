@@ -283,12 +283,7 @@ public class RpgSpecialization implements Specialization {
                     if (player.getMetadataAs(spec + ".level", Integer.class) != null && player.getMetadataAs(spec + ".level", Integer.class) < preSpecs.get(spec))
                         hasSpecs = false;
 
-            Integer levelReq = null;
-
-            if (level >= 0 && level < levelReqs.size())
-                levelReq = levelReqs.get(level);
-
-            return hasSpecs && (levelReq == null || levelReq <= player.getLevel());
+            return hasSpecs && levelReqs.get(level) <= player.getLevel();
         }
 
         return false;
