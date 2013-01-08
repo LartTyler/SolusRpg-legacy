@@ -47,7 +47,7 @@ public class RpgStockListener implements Listener {
     public void onRpgPlayerJoin(RpgPlayerJoinEvent ev) {
         FileConfiguration conf = YamlConfiguration.loadConfiguration(new File(Directories.DATA + "config.yml"));
 
-        if (conf.isConfigurationSection("config.spawn") && ev.getPlayer().getBasePlayer().hasPlayedBefore())
+        if (conf.isConfigurationSection("config.spawn") && !ev.getPlayer().hasPlayedBefore())
             ev.getPlayer().getBasePlayer().teleport(new Location(Bukkit.getWorld(conf.getString("config.spawn.world")), conf.getDouble("config.spawn.x"), conf.getDouble("config.spawn.y"), conf.getDouble("config.spawn.z"), (float)conf.getDouble("config.spawn.yaw"), (float)conf.getDouble("config.spawn.pitch")));
     }
 
