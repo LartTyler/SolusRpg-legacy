@@ -296,8 +296,6 @@ public class EventDistributor implements Listener {
         Bukkit.getPluginManager().callEvent(event);
 
         ev.setCancelled(event.isCancelled());
-        ev.setCursor(event.getCursor());
-        ev.setCurrentItem(event.getItem());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
