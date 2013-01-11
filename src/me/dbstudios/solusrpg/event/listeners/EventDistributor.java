@@ -5,15 +5,21 @@
 
 package me.dbstudios.solusrpg.event.listeners;
 
+import java.util.HashMap;
+import java.util.Map;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
+import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.inventory.RpgInventoryCloseEvent;
 import me.dbstudios.solusrpg.event.inventory.RpgInventoryOpenEvent;
 import me.dbstudios.solusrpg.event.player.*;
+import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.util.DamageType;
+import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -23,9 +29,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -283,5 +293,51 @@ public class EventDistributor implements Listener {
         RpgInventoryCloseEvent event = new RpgInventoryCloseEvent(ev.getView());
 
         Bukkit.getPluginManager().callEvent(event);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClick(InventoryClickEvent ev) {
+        if (ev.getWhoClicked() instanceof Player) {
+            RpgPlayer clicker = PlayerManager.get(ev.getWhoClicked().getUniqueId());
+            PermitNode permitNode = null;
+            SlotType targetSlotType = null;
+
+            switch (clicker.getActiveInventoryType()) {
+                case WORKBENCH:
+                case CRAFTING:
+                    permitNode = PermitNode.CRAFT;
+                    targetSlotType = SlotType.RESULT;
+
+                    break;
+                case FURNACE:
+                    permitNode = PermitNode.SMELT;
+                    targetSlotType = SlotType.CRAFTING;
+
+                    break;
+            }
+
+            if (permitNode == null || targetSlotType == null)
+                return;
+
+            String item = null;
+
+            if (ev.getSlotType() == targetSlotType)
+                if (ev.getCurrentItem() != null && ev.getCurrentItem().getType() != Material.AIR)
+                    item = Util.getItemName(ev.getCurrentItem());
+                else if (ev.getCursor() != null && ev.getCursor().getType() != Material.AIR)
+                    item = Util.getItemName(ev.getCursor());
+
+            if (item != null && !clicker.isAllowed(permitNode, item)) {
+                ev.setCancelled(true);
+
+                if (PhraseManager.phraseExists("player." + permitNode.name().toLowerCase() + "-deny")) {
+                    Map<String, String> args = new HashMap<>();
+
+                    args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n " : " ")) + item.replace('_', ' ').toLowerCase());
+
+                    clicker.sendEventMessage(PhraseManager.getPhrase("player." + permitNode.name().toLowerCase() + "-deny"), args);
+                }
+            }
+        }
     }
 }
