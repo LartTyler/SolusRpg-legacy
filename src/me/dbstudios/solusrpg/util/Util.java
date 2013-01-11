@@ -15,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.getspout.spoutapi.SpoutWorld;
 import org.getspout.spoutapi.block.SpoutBlock;
 
@@ -53,6 +54,10 @@ public class Util {
 
     public static SpoutBlock toSpoutBlock(Block block) {
 	return (new SpoutWorld(block.getWorld())).getBlockAt(block.getLocation());
+    }
+
+    public static String getItemName(ItemStack item) {
+        return item != null ? Util.getItemName(item.getType(), item.getData().getData()) : null;
     }
 
     public static String getItemName(Material type, byte data) {
