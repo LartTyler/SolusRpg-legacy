@@ -14,8 +14,6 @@ import me.dbstudios.solusrpg.entities.conf.PermitNode;
 import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.event.block.RpgBlockBreakEvent;
 import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
-import me.dbstudios.solusrpg.event.inventory.RpgCraftItemEvent;
-import me.dbstudios.solusrpg.event.inventory.RpgInventoryClickEvent;
 import me.dbstudios.solusrpg.event.inventory.RpgInventoryCloseEvent;
 import me.dbstudios.solusrpg.event.inventory.RpgInventoryOpenEvent;
 import me.dbstudios.solusrpg.event.player.*;
@@ -26,12 +24,13 @@ import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -296,57 +295,49 @@ public class RpgStockListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgInventoryClose(RpgInventoryCloseEvent ev) {
-        ev.getPlayer().setActiveInventoryType(null);
-    }
+        RpgPlayer player = ev.getPlayer();
+        ItemStack[] armor = player.getInventory().getArmorContents();
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onRpgPlayerCraftItem(RpgCraftItemEvent ev) {
-        RpgPlayer player = ev.getClicker();
-        String item = ev.getRecipeResult();
+        for (int i = 0; i < armor.length; i++) {
+            if (armor[i] == null || armor[i].getType() == Material.AIR)
+                continue;
 
-        if (!player.isAllowed(PermitNode.CRAFT, item)) {
-            ev.setCancelled(true);
+            String item = Util.getItemName(armor[i].getType(), armor[i].getData().getData());
 
-            if (PhraseManager.phraseExists("player.craft-deny")) {
-                Map<String, String> args = new HashMap<>();
+            if (!player.isAllowed(PermitNode.WEAR, item)) {
+                player.getWorld().dropItem(player.getLocation(), armor[i]);
 
-                args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n" : "")) + ' ' + item.replace('_', ' '));
+                armor[i] = null;
 
-                player.sendEventMessage(PhraseManager.getPhrase("player.craft-deny"), args);
+                if (PhraseManager.phraseExists("player.wear-deny")) {
+                    Map<String, String> args = new HashMap<>();
+
+                    args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n " : " ")) + item.replace('_', ' ').toLowerCase());
+
+                    player.sendEventMessage(PhraseManager.getPhrase("player.wear-deny"), args);
+                }
             }
         }
+
+        player.getInventory().setArmorContents(armor);
+        player.setActiveInventoryType(null);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onRpgInventoryClick(RpgInventoryClickEvent ev) {
-        RpgPlayer clicker = ev.getClicker();
-        String item = ev.getItemName();
-        String denyType = null;
-
-        switch (ev.getSlotType()) {
-            case ARMOR:
-                denyType = "wear";
-
-                if (!clicker.isAllowed(PermitNode.WEAR, item))
-                    ev.setCancelled(true);
-                break;
-            case CRAFTING:
-                if (clicker.getActiveInventoryType() == InventoryType.FURNACE) {
-                    denyType = "smelt";
-
-                    if (!clicker.isAllowed(PermitNode.SMELT, item))
-                        ev.setCancelled(true);
-                }
-
-                break;
-        }
-
-        if (ev.isCancelled() && denyType != null && PhraseManager.phraseExists("player." + denyType + "-deny")) {
-            Map<String, String> args = new HashMap<>();
-
-            args.put("item", item);
-
-            clicker.sendEventMessage(PhraseManager.getPhrase("player." + denyType + "-deny"), args);
-        }
-    }
+//    @EventHandler(priority = EventPriority.LOWEST)
+//    public void onRpgPlayerCraftItem(RpgCraftItemEvent ev) {
+//        RpgPlayer player = ev.getClicker();
+//        String item = ev.getRecipeResult();
+//
+//        if (!player.isAllowed(PermitNode.CRAFT, item)) {
+//            ev.setCancelled(true);
+//
+//            if (PhraseManager.phraseExists("player.craft-deny")) {
+//                Map<String, String> args = new HashMap<>();
+//
+//                args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n" : "")) + ' ' + item.replace('_', ' '));
+//
+//                player.sendEventMessage(PhraseManager.getPhrase("player.craft-deny"), args);
+//            }
+//        }
+//    }
 }

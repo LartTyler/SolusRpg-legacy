@@ -21,11 +21,14 @@ import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Metadatable;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.PlayerInventory;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
@@ -508,5 +511,17 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
     public boolean hasPlayedBefore() {
         return basePlayer.hasPlayedBefore();
+    }
+
+    public PlayerInventory getInventory() {
+        return basePlayer.getInventory();
+    }
+
+    public World getWorld() {
+        return basePlayer.getWorld();
+    }
+
+    public Location getLocation() {
+        return basePlayer.getLocation();
     }
 }

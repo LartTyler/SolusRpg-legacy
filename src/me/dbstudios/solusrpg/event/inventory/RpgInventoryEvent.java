@@ -12,6 +12,7 @@ import me.dbstudios.solusrpg.managers.PlayerManager;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
@@ -20,7 +21,7 @@ import org.bukkit.inventory.InventoryView;
  * @author Tyler Lartonoix
  */
 public class RpgInventoryEvent extends Event {
-    public static HandlerList handlers = new HandlerList();
+    private static HandlerList handlers = new HandlerList();
 
     private final InventoryView view;
     private final RpgPlayer clicker;
@@ -54,6 +55,10 @@ public class RpgInventoryEvent extends Event {
 
     public RpgPlayer getClicker() {
         return this.clicker;
+    }
+
+    public InventoryType getInventoryType() {
+        return view.getType();
     }
 
     public HandlerList getHandlers() {

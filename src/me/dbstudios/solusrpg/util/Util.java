@@ -24,7 +24,7 @@ import org.getspout.spoutapi.block.SpoutBlock;
 public class Util {
     public static String format(String str, Object... args) {
         for (int i = 0; i < args.length; i++)
-            str = str.replace("{" + i + "}", args[i].toString());
+            str = str.replace("{" + i + "}", args[i] != null ? args[i].toString() : "null");
 
         return str;
     }
