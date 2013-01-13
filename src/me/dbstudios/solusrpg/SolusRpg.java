@@ -62,6 +62,16 @@ public class SolusRpg extends JavaPlugin {
         if (!f.exists())
             Util.extract("/resources/spec_tooltip_format.dat", f);
 
+        f = new File(Directories.CONFIG + "modify_result_format.dat");
+
+        if (!f.exists())
+            Util.extract("/resources/modify_result_format.dat", f);
+
+        f = new File(Directories.CONFIG + "respec_result_format.dat");
+
+        if (!f.exists())
+            Util.extract("/resources/respec_result_format.dat", f);
+
         f = new File(Directories.CONFIG + "specializations.yml");
 
         if (!f.exists())

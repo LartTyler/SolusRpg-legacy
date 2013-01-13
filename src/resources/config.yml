@@ -5,7 +5,6 @@ config:
       break-deny: "{aqua}Your class ({green}{class}{aqua}) cannot break {green}{item}{aqua}."
       place-deny: "{aqua}Your class ({green}{class}{aqua}) cannot place {green}{item}{aqua}."
       wear-deny: "{aqua}Your class ({green}{class}{aqua}) cannot wear {green}{item}{aqua}."
-      wear-deny-drop: "{aqua}Your inventory was full, so {green}{item}{aqua} was dropped."
       craft-deny: "{aqua}Your class ({green}{class}{aqua}) cannot craft {green}{item}{aqua}."
       smelt-deny: "{aqua}Your class ({green}{class}{aqua}) cannot smelt {green}{item}{aqua}."
       no-damage: "{aqua}Your blows fail to damage {green}{target}{aqua}."
@@ -14,6 +13,7 @@ config:
     experience-algorithm: "50 * ({level} - 1)"
     skill-points: 1
     starting-level: 1
+    starting-skill-points: 2
   default-class: Classless
   classes:
     - Classless

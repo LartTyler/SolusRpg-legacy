@@ -1,5 +1,7 @@
 groups:
   COMMON_ITEMS:
+    - CHEST
+    - WOOD_DOOR
     - DIRT
     - GRASS
     - TALL_GRASS
@@ -12,6 +14,7 @@ groups:
     - .*_LEAVES
     - .*_SAPLING
     - COBBLESTONE
+    - LADDER
     - SAND
     - WATER_LILY
     - (WALL_)?SIGN(_POST)?
@@ -19,7 +22,6 @@ groups:
     - YELLOW_FLOWER
     - RED_ROSE
     - STONE
-    - COBBLESTONE
     - SPONGE
     - BOOKSHELF
     - .*_STEP
@@ -32,7 +34,7 @@ groups:
     - JACK_O_LANTERN
     - MYCELIUM
     - TORCH
-    - CRAFTING_TABLE
+    - WORKBENCH
     - (BURNING_)?FURNACE
     - BED
     - FLOWER_POT(_ITEM)?
@@ -46,6 +48,18 @@ groups:
     - EGG
     - FLINT_AND_STEEL
     - FISTS
+  COMMON_CRAFTING_ITEMS:
+    - .*_WOOL
+    - .*_DYE
+    - (WALL_)?SIGN(_POST)?
+    - JACK_O_LANTERN
+    - TORCH
+    - WORKBENCH
+    - (BURNING_)?FURNACE
+    - SNOWBALL
+    - MAP
+    - FLINT_AND_STEEL
+    - STICK
   RAW_MEAT:
     - RAW_(BEEF|CHICKEN|FISH)
     - PORK
@@ -62,7 +76,7 @@ groups:
   LEATHER_ARMOR:
     - LEATHER_(HELMET|CHESTPLATE|LEGGINGS|BOOTS)
   CHAINMAIL_ARMOR:
-    - CHAIN_(HELMET|CHESTPLATE|LEGGINGS|BOOTS)
+    - CHAINMAIL_(HELMET|CHESTPLATE|LEGGINGS|BOOTS)
   IRON_ARMOR:
     - IRON_(HELMET|CHESTPLATE|LEGGINGS|BOOTS)
   GOLD_ARMOR:

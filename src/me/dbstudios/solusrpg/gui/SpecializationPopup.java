@@ -26,7 +26,7 @@ public class SpecializationPopup extends GenericPopup {
 
         Label skillPointsLabel = new GenericLabel("Available skill points: " + player.getSkillPoints());
 
-        skillPointsLabel.setScale(0.75f).setFixed(true).setX(10).setY(2).setHeight(8);
+        skillPointsLabel.setScale(0.5f).setFixed(true).setX(10).setY(2).setHeight(8);
 
         super.attachWidget(SolusRpg.getInstance(), skillPointsLabel);
 

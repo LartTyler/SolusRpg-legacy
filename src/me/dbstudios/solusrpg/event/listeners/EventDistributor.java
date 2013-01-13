@@ -32,10 +32,9 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.*;
-import org.bukkit.inventory.ItemStack;
+import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
 
 /**
  *
@@ -43,14 +42,14 @@ import org.bukkit.inventory.ItemStack;
  */
 public class EventDistributor implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerJoin(PlayerJoinEvent ev) {
-	if (PlayerManager.add(ev.getPlayer())) {
-	    RpgPlayerJoinEvent event = new RpgPlayerJoinEvent(ev.getPlayer(), ev.getJoinMessage());
+    public void onSpoutcraftEnable(SpoutCraftEnableEvent ev) {
+        if (PlayerManager.add(ev.getPlayer())) {
+            RpgPlayerJoinEvent event = new RpgPlayerJoinEvent(ev.getPlayer(), null);
 
-	    Bukkit.getPluginManager().callEvent(event);
-
-	    ev.setJoinMessage(event.getJoinMessage());
-	}
+            Bukkit.getPluginManager().callEvent(event);
+        } else {
+            ev.getPlayer().kickPlayer("[SolusRpg] An error occurred while initialization your player data. Please contact an admin, and make sure you are using the newest version of the Spout client.");
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -128,7 +127,10 @@ public class EventDistributor implements Listener {
 
             int trueHealth = (int)Math.ceil(20.0 * ((double)player.getHealth() / (double)player.getMaxHealth()));
 
-            ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+            if (player.getHealth() <= 0)
+                ev.setDamage(player.getBasePlayer().getHealth());
+            else
+                ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
 
             // If we reach this point, damage should be dealt to the RpgPlayer. However, this does not always mean that the player's true health
             // will change. If it does not (i.e. the end damage is set to zero), then the damage animation will not player. The block below will increase the
@@ -191,7 +193,10 @@ public class EventDistributor implements Listener {
 
             int trueHealth = (int)Math.ceil(20.0 * ((double)player.getHealth() / (double)player.getMaxHealth()));
 
-            ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
+            if (player.getHealth() <= 0)
+                ev.setDamage(player.getBasePlayer().getHealth());
+            else
+                ev.setDamage(player.getBasePlayer().getHealth() - trueHealth);
 
             if (ev.getDamage() == 0 && trueHealth != 20) {
                 player.getBasePlayer().setHealth(player.getBasePlayer().getHealth() + 1);
@@ -297,12 +302,12 @@ public class EventDistributor implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent ev) {
-        if (ev.getWhoClicked() instanceof Player) {
+        if (ev.getWhoClicked() instanceof Player && ev.getSlot() != -999) {
             RpgPlayer clicker = PlayerManager.get(ev.getWhoClicked().getUniqueId());
             PermitNode permitNode = null;
             SlotType targetSlotType = null;
 
-            switch (clicker.getActiveInventoryType()) {
+            switch (ev.getView().getType()) {
                 case WORKBENCH:
                 case CRAFTING:
                     permitNode = PermitNode.CRAFT;

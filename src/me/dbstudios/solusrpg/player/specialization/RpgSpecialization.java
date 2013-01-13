@@ -103,7 +103,7 @@ public class RpgSpecialization implements Specialization {
                 if (map.containsKey("level") && map.get("level") instanceof Integer)
                     levels.add((Integer)map.get("level"));
                 else
-                    levels.add(null);
+                    levels.add(0);
             }
 
         this.requires = Collections.unmodifiableList(reqList);
@@ -153,7 +153,7 @@ public class RpgSpecialization implements Specialization {
             if (statEffects.get(level) != null)
                 for (StatType key : stats.keySet())
                     try {
-                        player.setStat(key, player.getStat(key).merge(stats.get(key)));
+                        player.setStat(key, player.getPlayerStat(key).merge(stats.get(key)));
                     } catch (IncompatibleStatTypeException e) {}
 
             if (permitEffects.get(level) != null)

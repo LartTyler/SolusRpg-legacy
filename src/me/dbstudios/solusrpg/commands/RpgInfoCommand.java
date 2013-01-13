@@ -34,10 +34,11 @@ import org.bukkit.entity.Player;
  */
 public class RpgInfoCommand {
     public static boolean onCommand(CommandSender sender, Command command, String... args) {
-        List<Player> potentialMatches = Bukkit.matchPlayer(args[1]);
+        boolean infoSelf = args.length == 1 && PermissionManager.hasPermission(sender, "info.self", true) && sender instanceof Player;
+        List<Player> potentialMatches = Bukkit.matchPlayer(args.length != 1 ? args[1] : sender.getName());
 
         if (!potentialMatches.isEmpty()) {
-            if (!PermissionManager.hasPermission(sender, "dbstudios.solusrpg.info.player", false)) {
+            if (!PermissionManager.hasPermission(sender, "dbstudios.solusrpg.info.player", false) && !infoSelf) {
                 Util.sendMessage(sender, "{dark_red}Error: {aqua}You do not have sufficient permissions to perform this command.");
             } else {
                 RpgPlayer target = PlayerManager.get(potentialMatches.get(0));

@@ -1,16 +1,16 @@
 combat:
   effects:
     - stat:
-        strength: 5
+        strength: 1
     - stat:
-        strength: 10
+        strength: 3
         vitality: 5
     - stat:
-        strength: 15
+        strength: 5
         vitality: 10
     - stat:
-        strength: 20
-        vitality: 30
+        strength: 10
+        vitality: 20
   requires:
     - level: 1
     - level: 5
@@ -59,15 +59,27 @@ combat:
       - permit:
           can-use:
             - STONE_SWORD
+        stat:
+          strength: 2
+          vitality: 2
       - permit:
           can-use:
             - IRON_SWORD
+        stat:
+          strength: 4
+          vitality: 3
       - permit:
           can-use:
             - GOLD_SWORD
+        stat:
+          strength: 6
+          vitality: 5
       - permit:
           can-use:
             - DIAMOND_SWORD
+        stat:
+          strength: 8
+          vitality: 10
     requires:
       - level: 1
         specialization:
@@ -88,27 +100,28 @@ combat:
   guardian-training:
     effects:
       - stat:
-          armor: 5
+          armor: 1
           vitality: 10
+        permit:
+          can-wear:
+            - "@CHAINMAIL_ARMOR"
       - permit:
           can-wear:
-            - IRON_ARMOR
+            - "@IRON_ARMOR"
         stat:
-          armor: 10
+          armor: 3
           vitality: 20
       - permit:
           can-wear:
-            - GOLD_ARMOR
+            - "@GOLD_ARMOR"
         stat:
-          armor: 20
-          aura: 10
+          armor: 5
           vitality: 30
       - permit:
           can-wear:
-            - DIAMOND_ARMOR
+            - "@DIAMOND_ARMOR"
         stat:
-          armor: 30
-          aura: 20
+          armor: 7
     requires:
       - level: 1
         specialization:
@@ -144,13 +157,21 @@ gathering:
             - STONE
             - COBBLESTONE
             - COAL_ORE
-            - STONE_STAIRS
-            - STONE_STEPS
+            - COBBLE_WALL
+            - "@STONE_STAIRS"
+            - "@STONE_STEPS"
+            - STONE_BRICK
           can-place:
             - STONE
             - COBBLESTONE
-            - STONE_STAIRS
-            - STONE_STEPS
+            - COBBLE_WALL
+            - "@STONE_STAIRS"
+            - "@STONE_STEPS"
+            - STONE_BRICK
+          can-craft:
+            - COBBLE_WALL
+            - "@STONE_STAIRS"
+            - "@STONE_STEPS"
           can-use:
             - WOOD_PICKAXE
             - STONE_PICKAXE
@@ -321,6 +342,10 @@ crafting:
             - ANVIL
             - IRON_FENCE
             - THIN_GLASS
+            - STONE_SWORD
+            - IRON_SWORD
+            - STONE_PICKAXE
+            - IRON_PICKAXE
           can-smelt:
             - IRON_ORE
             - GOLD_ORE
@@ -337,6 +362,10 @@ crafting:
             - IRON_INGOT
             - GOLD_INGOT
             - LAPIS_LAZULI_DYE
+            - GOLD_SWORD
+            - DIAMOND_SWORD
+            - GOLD_PICKAXE
+            - IRON_PICKAXE
     requires:
       - level: 1
         specialization:
@@ -379,31 +408,25 @@ crafting:
             - "@WOOD_STAIRS"
             - "@WOOD_STEPS"
             - LADDER
-            - CHEST
-            - ^FENCE
+            - FENCE
             - FENCE_GATE
             - "@WOOD_PLANKS"
-            - WOOD_DOOR
             - TRAP_DOOR
           can-break:
             - "@WOOD_STAIRS"
             - "@WOOD_STEPS"
             - LADDER
-            - CHEST
-            - ^FENCE
+            - FENCE
             - FENCE_GATE
             - "@WOOD_PLANKS"
-            - WOOD_DOOR
             - TRAP_DOOR
           can-craft:
             - "@WOOD_STAIRS"
             - "@WOOD_STEPS"
             - LADDER
-            - CHEST
             - FENCE
             - FENCE_GATE
             - "@WOOD_PLANKS"
-            - WOOD_DOOR
             - TRAP_DOOR
             - BOAT
             - WOOD_SWORD
@@ -411,6 +434,7 @@ crafting:
             - ARROW
             - "@SIGNS"
             - BED
+            - CHEST
       - permit:
           can-craft:
             - PAINTING

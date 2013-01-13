@@ -11,7 +11,7 @@ class:
     can-wear:
       - "@LEATHER_ARMOR"
     can-craft:
-      - "@COMMON_ITEMS"
+      - "@COMMON_CRAFTING_ITEMS"
     can-smelt:
       - "@COMMON_ITEMS"
       - "@RAW_MEAT"
@@ -22,3 +22,5 @@ class:
     aura: 0      # Magical resistance
     vitality: 50 # Health
     precision: 0 # Critical ratio / damage modifier (0 - 25 = 125% dmg, 26 - 50 = 150% dmg, 51 - 75 = 175% dmg, 76 - 100 = 200% dmg)
+    health:
+      name: Health

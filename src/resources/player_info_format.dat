@@ -4,5 +4,7 @@
 {bold}{aqua}Class: {reset}{green}{class}
 {bold}{aqua}Level: {reset}{green}{level}
 {bold}{aqua}Experience: {reset}{green}{experience} {aqua}/ {green}{experience-to-level}
+{bold}{aqua}Skill points: {reset}{green}{skill-points}
 {bold}{aqua}{health-name}: {reset}{red}{health} {aqua}/ {red}{max-health}
+{bold}{aqua}Stats: {reset}{dark_green}{strength} {aqua}/ {light_purple}{magic} {aqua}/ {dark_red}{armor} {aqua}/ {gold}{aura} {aqua}/ {yellow}{precision}
 #{bold}{aqua}{energy-name}: {reset}{dark_aqua}{energy} {aqua}/ {dark_aqua}{max-energy}     -- Not implemented

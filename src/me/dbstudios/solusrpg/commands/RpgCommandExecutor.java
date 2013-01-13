@@ -17,7 +17,7 @@ public class RpgCommandExecutor implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String... args) {
 	if (args.length > 1 && args[0].equalsIgnoreCase("modify"))
 	    return RpgModifyCommand.onCommand(sender, command, args);
-        else if (args.length > 1 && args[0].equalsIgnoreCase("info"))
+        else if (args.length >= 1 && args[0].equalsIgnoreCase("info"))
 	    return RpgInfoCommand.onCommand(sender, command, args);
         else if (args.length > 1 && args[0].equalsIgnoreCase("list"))
             return RpgListCommand.onCommand(sender, command, args);
@@ -25,6 +25,8 @@ public class RpgCommandExecutor implements CommandExecutor {
             return RpgSpecCommand.onCommand(sender, command, args);
         else if (args.length == 2 && args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("spawn"))
             return RpgSetSpawnCommand.onCommand(sender, command, args);
+        else if (args.length >= 2 && args[0].equalsIgnoreCase("respec"))
+            return RpgRespecCommand.onCommand(sender, command, args);
 
 	return false;
     }

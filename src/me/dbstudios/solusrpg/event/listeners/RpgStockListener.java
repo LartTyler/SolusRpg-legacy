@@ -27,6 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -37,6 +38,8 @@ import org.bukkit.inventory.ItemStack;
  * @author Tyler Lartonoix
  */
 public class RpgStockListener implements Listener {
+    private final Map<Projectile, Integer> arrowDamage = new HashMap<>();
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerQuit(RpgPlayerQuitEvent ev) {
         PlayerManager.remove(ev.getPlayer().getBasePlayer());
@@ -53,6 +56,12 @@ public class RpgStockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgBlockBreak(RpgBlockBreakEvent ev) {
 	RpgPlayer player = ev.getPlayer();
+
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
 
 	if (!player.isAllowed(PermitNode.BREAK, ev.getBlockName())) {
 	    ev.setCancelled(true);
@@ -71,6 +80,12 @@ public class RpgStockListener implements Listener {
     public void onRpgBlockPlace(RpgBlockPlaceEvent ev) {
 	RpgPlayer player = ev.getPlayer();
 
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
+
 	if (!player.isAllowed(PermitNode.PLACE, ev.getBlockName())) {
 	    ev.setCancelled(true);
 
@@ -87,6 +102,12 @@ public class RpgStockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerInteract(RpgPlayerInteractEvent ev) {
 	RpgPlayer player = ev.getPlayer();
+
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
 
 	if (!player.isAllowed(PermitNode.USE, ev.getItemName())) {
 	    ev.setCancelled(true);
@@ -105,6 +126,12 @@ public class RpgStockListener implements Listener {
     public void onRpgPlayerDamageEntity(RpgPlayerDamageEntityEvent ev) {
         RpgPlayer player = ev.getPlayer();
 
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
+
 	if (!player.isAllowed(PermitNode.USE, ev.getWeapon())) {
 	    ev.setCancelled(true);
 
@@ -119,33 +146,20 @@ public class RpgStockListener implements Listener {
 	}
 
 	if (!ev.isCancelled()) {
-            int damage = 0;
+            int damage = ev.getDamage();
 
             switch (ev.getDamageType()) {
                 case PHYSICAL:
-                    damage = player.getStat(StatType.STRENGTH).getValue();
+                    damage += player.getStat(StatType.STRENGTH).getValue();
 
                     break;
                 case MAGICAL:
-                    damage = player.getStat(StatType.MAGIC).getValue();
+                    damage += player.getStat(StatType.MAGIC).getValue();
 
                     break;
             }
 
-            if (damage > 0) {
-                ev.setDamage(damage);
-            } else {
-                ev.setCancelled(true);
-
-                if (PhraseManager.phraseExists("player.no-damage")) {
-                    Map<String, String> args = new HashMap<>();
-
-                    args.put("target", Util.getEntityName(ev.getTarget()));
-                    args.put("weapon", ev.getWeapon());
-
-                    player.sendEventMessage(PhraseManager.getPhrase("player.no-damage"), args);
-                }
-            }
+            ev.setDamage(Math.max(1, damage));
 	}
     }
 
@@ -153,6 +167,18 @@ public class RpgStockListener implements Listener {
     public void onRpgPlayerDamageByPlayer(RpgPlayerDamageByPlayerEvent ev) {
         RpgPlayer player = ev.getPlayer();
         RpgPlayer damager = ev.getDamager();
+
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
+
+        if (damager == null) {
+            damager.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
 
         if (!damager.isAllowed(PermitNode.USE, ev.getWeapon())) {
             ev.setCancelled(true);
@@ -168,33 +194,20 @@ public class RpgStockListener implements Listener {
         }
 
         if (!ev.isCancelled()) {
-            int damage = 0;
+            int damage = ev.getDamage();
 
             switch (ev.getDamageType()) {
                 case PHYSICAL:
-                    damage = damager.getStat(StatType.STRENGTH).getValue() - player.getStat(StatType.ARMOR).getValue();
+                    damage = damage + (damager.getStat(StatType.STRENGTH).getValue() - player.getStat(StatType.ARMOR).getValue());
 
                     break;
                 case MAGICAL:
-                    damage = damager.getStat(StatType.MAGIC).getValue() - player.getStat(StatType.AURA).getValue();
+                    damage = damage + (damager.getStat(StatType.MAGIC).getValue() - player.getStat(StatType.AURA).getValue());
 
                     break;
             }
 
-            if (damage > 0) {
-                ev.setDamage(Math.max(0, damage));
-            } else {
-                ev.setCancelled(true);
-
-                if (PhraseManager.phraseExists("player.no-damage")) {
-                    Map<String, String> args = new HashMap<>();
-
-                    args.put("target", ev.getPlayer().getDisplayName());
-                    args.put("weapon", ev.getWeapon());
-
-                    damager.sendEventMessage(PhraseManager.getPhrase("player.no-damage"), args);
-                }
-            }
+            ev.setDamage(Math.max(1, damage));
         }
     }
 
@@ -202,6 +215,12 @@ public class RpgStockListener implements Listener {
     public void onRpgPlayerDamageByBlock(RpgPlayerDamageByBlockEvent ev) {
         RpgPlayer player = ev.getPlayer();
         int damage = ev.getDamage();
+
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
 
         switch (ev.getDamageType()) {
             case PHYSICAL:
@@ -214,16 +233,16 @@ public class RpgStockListener implements Listener {
                 break;
         }
 
-        if (damage > 0)
-            ev.setDamage(Math.max(0, damage));
-        else
-            ev.setCancelled(true);
+        ev.setDamage(Math.max(1, damage));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerDamageByEntity(RpgPlayerDamageByEntityEvent ev) {
         RpgPlayer player = ev.getPlayer();
         int damage = ev.getDamage();
+
+        if (ev.getDamager() instanceof Projectile && arrowDamage.containsKey((Projectile)ev.getDamager()))
+            damage += arrowDamage.get((Projectile)ev.getDamager());
 
         switch (ev.getDamageType()) {
             case PHYSICAL:
@@ -236,10 +255,7 @@ public class RpgStockListener implements Listener {
                 break;
         }
 
-        if (damage > 0)
-            ev.setDamage(Math.max(0, damage));
-        else
-            ev.setCancelled(true);
+        ev.setDamage(Math.max(1, damage));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -258,10 +274,7 @@ public class RpgStockListener implements Listener {
                 break;
         }
 
-        if (damage > 0)
-            ev.setDamage(Math.max(0, damage));
-        else
-            ev.setCancelled(true);
+        ev.setDamage(Math.max(1, damage));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -269,6 +282,12 @@ public class RpgStockListener implements Listener {
         ev.getPlayer().setHealth(ev.getPlayer().getMaxHealth());
 
         final RpgPlayer player = ev.getPlayer();
+
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(SolusRpg.getInstance(), new Runnable() {
             public void run() {
@@ -296,6 +315,13 @@ public class RpgStockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgInventoryClose(RpgInventoryCloseEvent ev) {
         RpgPlayer player = ev.getPlayer();
+
+        if (player == null) {
+            player.sendMessage("{red}Error: {aqua}Your player data has not been initialized yet. Please wait a few more moments.");
+
+            return;
+        }
+
         ItemStack[] armor = player.getInventory().getArmorContents();
 
         for (int i = 0; i < armor.length; i++) {
@@ -323,21 +349,8 @@ public class RpgStockListener implements Listener {
         player.setActiveInventoryType(null);
     }
 
-//    @EventHandler(priority = EventPriority.LOWEST)
-//    public void onRpgPlayerCraftItem(RpgCraftItemEvent ev) {
-//        RpgPlayer player = ev.getClicker();
-//        String item = ev.getRecipeResult();
-//
-//        if (!player.isAllowed(PermitNode.CRAFT, item)) {
-//            ev.setCancelled(true);
-//
-//            if (PhraseManager.phraseExists("player.craft-deny")) {
-//                Map<String, String> args = new HashMap<>();
-//
-//                args.put("item", (Util.isUncountable(item) ? "" : "a" + (Util.isVowel(item.charAt(0)) ? "n" : "")) + ' ' + item.replace('_', ' '));
-//
-//                player.sendEventMessage(PhraseManager.getPhrase("player.craft-deny"), args);
-//            }
-//        }
-//    }
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onRpgPlayerShootBow(RpgPlayerShootBowEvent ev) {
+        arrowDamage.put(ev.getProjectile(), ev.getPlayer().getStat(StatType.STRENGTH).getValue());
+    }
 }

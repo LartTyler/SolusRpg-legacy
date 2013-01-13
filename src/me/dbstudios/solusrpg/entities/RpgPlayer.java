@@ -3,11 +3,7 @@ package me.dbstudios.solusrpg.entities;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
@@ -68,7 +64,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
 	    }
 
             this.level = LevelManager.getStartingLevel();
-            this.skillPoints = LevelManager.getSkillPointsPerLevel() * this.level;
+            this.skillPoints = LevelManager.getStartingSkillPoints();
             basePlayer.setLevel(LevelManager.getStartingLevel());
 
             ft = true;
@@ -91,7 +87,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
 	this.stats = statMap;
         this.health = new RpgHealthMeter(this, rpgClass.getConfiguration());
-        this.health.setValue(conf.getInt("player.health", health.getMaxValue()));
+        this.health.setValue(Math.max(0, Math.min(health.getMaxValue(), conf.getInt("player.health", health.getMaxValue()))));
 
         ConfigurationSection s = conf.getConfigurationSection("player.metadata");
 
@@ -119,6 +115,9 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
         basePlayer.setDisplayName(conf.getString("player.name", null) != null ? conf.getString("player.name") : basePlayer.getName());
         basePlayer.setTitle(conf.getString("player.name", null) != null ? conf.getString("player.name") : basePlayer.getName());
+        basePlayer.setHealth(Math.max(20, (int)Math.ceil(20.0 * ((double)this.health.getValue() / (double)this.health.getMaxValue()))));
+        basePlayer.setLevel(this.level);
+        basePlayer.setExp((float)((double)this.exp / (double)LevelManager.getExpToLevel(this.level + 1)));
     }
 
     public boolean isFirstSession() {
@@ -217,6 +216,10 @@ public class RpgPlayer implements Metadatable<String, Object> {
         permitNodes.get(node).addAll(patterns);
     }
 
+    public void resetAllowed(PermitNode node) {
+        permitNodes.get(node).clear();
+    }
+
     public void removeAllowed(PermitNode node, String pattern) {
         this.removeAllowed(node, Pattern.compile(pattern));
     }
@@ -230,6 +233,10 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
     public void removeAllowed(PermitNode node, List<Pattern> patterns) {
         permitNodes.get(node).removeAll(patterns);
+    }
+
+    public Stat getPlayerStat(StatType type) {
+        return stats.get(type);
     }
 
     public Stat getStat(StatType type) {
@@ -262,6 +269,9 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
     public RpgPlayer setHealth(int value) {
         health.setValue(value);
+
+        if (value <= 0)
+            this.basePlayer.setHealth(0);
 
         return this;
     }
@@ -350,6 +360,10 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
     public boolean hasMetadata(String key) {
         return metadata.containsKey(key);
+    }
+
+    public void clearMetadata() {
+        metadata.clear();
     }
 
     public RpgPlayer setExp(int exp) {
