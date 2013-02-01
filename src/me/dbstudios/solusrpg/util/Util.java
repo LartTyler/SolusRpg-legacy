@@ -1,6 +1,8 @@
 
 package me.dbstudios.solusrpg.util;
 
+import bsh.EvalError;
+import bsh.Interpreter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +11,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
+import me.dbstudios.solusrpg.chat.ChatChannel;
+import me.dbstudios.solusrpg.entities.RpgPlayer;
+import me.dbstudios.solusrpg.managers.ChannelManager;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -149,5 +155,35 @@ public class Util {
             return true;
 
         return false;
+    }
+
+    public static double getDistance(RpgPlayer a, RpgPlayer b) {
+        return Util.getDistance(a.getLocation(), b.getLocation());
+    }
+
+    public static double getDistance(Location a, Location b) {
+        return Math.sqrt(Math.pow(b.getX() - a.getX(), 2) + Math.pow(b.getY() - a.getY(), 2) + Math.pow(b.getZ() - a.getZ(), 2));
+    }
+
+    public static double getRangeFactor(ChatChannel channel, double distance) {
+        return Util.getRangeFactor(channel.getRangeFactorAlgorithm(), channel.getRange(), distance);
+    }
+
+    public static double getRangeFactor(String algo, int range, double distance) {
+        Interpreter i = new Interpreter();
+        Object raw = null;
+
+        try {
+            raw = i.eval(algo.toLowerCase().replace("{range}", range + "").replace("{distance}", distance + ""));
+        } catch (EvalError e) {
+            SolusRpg.log(Level.WARNING, "Could not evaluate range factor algorithm '{0}'.", algo);
+        }
+
+        if (raw == null)
+            try {
+                raw = i.eval(ChannelManager.getRangeFactorAlgorithm().replace("{range}", range + "").replace("{distance}", distance + ""));
+            } catch (EvalError e) {}
+
+        return raw != null ? (double)raw : -1.0;
     }
 }

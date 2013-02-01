@@ -16,6 +16,8 @@ public enum Directories {
     BASE("plugins::dbstudios::SolusRpg::"),
     CONFIG(BASE + "config::"),
     CLASSES(BASE + "classes::"),
+    CHAT(BASE + "chat::"),
+    CHAT_CHANNELS(CHAT + "channels::"),
     DATA(BASE + "data::");
 
     private final String path;

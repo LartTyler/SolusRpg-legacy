@@ -20,6 +20,7 @@ import me.dbstudios.solusrpg.event.player.*;
 import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
+import me.dbstudios.solusrpg.managers.SpecializationManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.Bukkit;
@@ -47,6 +48,8 @@ public class RpgStockListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerJoin(RpgPlayerJoinEvent ev) {
+        SpecializationManager.applyOwnedSpecializations(ev.getPlayer());
+
         FileConfiguration conf = YamlConfiguration.loadConfiguration(new File(Directories.DATA + "config.yml"));
 
         if (conf.isConfigurationSection("config.spawn") && !ev.getPlayer().hasPlayedBefore())

@@ -3,6 +3,7 @@ package me.dbstudios.solusrpg.managers;
 
 import java.io.File;
 import java.util.*;
+import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.player.specialization.RpgSpecialization;
 import me.dbstudios.solusrpg.player.specialization.Specialization;
 import me.dbstudios.solusrpg.util.Directories;
@@ -47,5 +48,35 @@ public class SpecializationManager {
 
     public static Collection<Specialization> getSpecializationCollection() {
         return specTrees.values();
+    }
+
+    public static void applyOwnedSpecializations(RpgPlayer player) {
+        for (Specialization root : specTrees.values()) {
+            List<Specialization> subs = new ArrayList<>();
+
+            subs.add(root);
+
+            while (subs != null && !subs.isEmpty()) {
+                List<Specialization> newSubs = new ArrayList<>();
+
+                for (Specialization s : subs) {
+                    if (player.hasMetadata(s.getUniqueName() + ".level")) {
+                        Integer level = player.getMetadataAs(s.getUniqueName(), Integer.class);
+
+                        if (level != null)
+                            for (int i = 1; i <= level; i++)
+                                s.applyEffect(player, i);
+                    }
+
+                    if (s.hasSubSpecialization())
+                        newSubs.addAll(s.getSubSpecialization());
+                }
+
+                if (newSubs.isEmpty())
+                    subs.clear();
+                else
+                    subs = newSubs;
+            }
+        }
     }
 }

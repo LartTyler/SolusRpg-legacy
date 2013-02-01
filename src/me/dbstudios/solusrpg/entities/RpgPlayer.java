@@ -7,12 +7,14 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
+import me.dbstudios.solusrpg.chat.ChatChannel;
 import me.dbstudios.solusrpg.entities.conf.*;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
+import me.dbstudios.solusrpg.managers.SpecializationManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Metadatable;
 import me.dbstudios.solusrpg.util.Util;
@@ -44,6 +46,7 @@ public class RpgPlayer implements Metadatable<String, Object> {
     private int exp = 0;
     private int skillPoints = -1;
     private InventoryType activeInventoryType = null;
+    private ChatChannel activeChannel = null;
 
     private RpgClass rpgClass;
 
@@ -101,17 +104,17 @@ public class RpgPlayer implements Metadatable<String, Object> {
         if (this.skillPoints == -1)
             this.skillPoints = conf.getInt("player.skill-points", 0);
 
-        for (PermitNode n : PermitNode.values()) {
-            List<Pattern> patterns = new ArrayList<>();
-
-            for (String pattern : Util.toTypedList(conf.getList("player.permit-nodes." + n.getNode(), null), String.class))
-                if (!pattern.startsWith("(?i)^"))
-                    patterns.add(Pattern.compile("(?i)^" + pattern + "$"));
-                else
-                    patterns.add(Pattern.compile(pattern));
-
-            permitNodes.put(n, patterns);
-        }
+//        for (PermitNode n : PermitNode.values()) {
+//            List<Pattern> patterns = new ArrayList<>();
+//
+//            for (String pattern : Util.toTypedList(conf.getList("player.permit-nodes." + n.getNode(), null), String.class))
+//                if (!pattern.startsWith("(?i)^"))
+//                    patterns.add(Pattern.compile("(?i)^" + pattern + "$"));
+//                else
+//                    patterns.add(Pattern.compile(pattern));
+//
+//            permitNodes.put(n, patterns);
+//        }
 
         basePlayer.setDisplayName(conf.getString("player.name", null) != null ? conf.getString("player.name") : basePlayer.getName());
         basePlayer.setTitle(conf.getString("player.name", null) != null ? conf.getString("player.name") : basePlayer.getName());
@@ -317,14 +320,14 @@ public class RpgPlayer implements Metadatable<String, Object> {
         conf.set("player.skill-points", this.skillPoints);
         conf.set("player.name", basePlayer.getDisplayName());
 
-        for (PermitNode key : permitNodes.keySet()) {
-            List<String> patterns = new ArrayList<>();
-
-            for (Pattern p : permitNodes.get(key))
-                patterns.add(p.pattern());
-
-            conf.set("player.permit-nodes." + key.getNode(), patterns);
-        }
+//        for (PermitNode key : permitNodes.keySet()) {
+//            List<String> patterns = new ArrayList<>();
+//
+//            for (Pattern p : permitNodes.get(key))
+//                patterns.add(p.pattern());
+//
+//            conf.set("player.permit-nodes." + key.getNode(), patterns);
+//        }
 
         try {
             conf.save(f);
@@ -537,5 +540,9 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
     public Location getLocation() {
         return basePlayer.getLocation();
+    }
+
+    public ChatChannel getActiveChannel() {
+        return this.activeChannel;
     }
 }
