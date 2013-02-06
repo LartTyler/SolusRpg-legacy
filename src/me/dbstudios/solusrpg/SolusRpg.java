@@ -9,7 +9,9 @@ import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.entities.conf.ItemGroups;
 import me.dbstudios.solusrpg.event.listeners.EventDistributor;
 import me.dbstudios.solusrpg.event.listeners.RpgStockListener;
+import me.dbstudios.solusrpg.managers.ChannelManager;
 import me.dbstudios.solusrpg.managers.ClassManager;
+import me.dbstudios.solusrpg.managers.DensityManager;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
 import me.dbstudios.solusrpg.managers.SpecializationManager;
@@ -77,7 +79,7 @@ public class SolusRpg extends JavaPlugin {
         if (!f.exists())
             Util.extract("/resources/specializations.yml", f);
 
-        f = new File("plugins" + File.separator + "lib" + File.separator + "beanshell-core.jar");
+        f = new File(Directories.LIBRARIES + "beanshell-core.jar");
 
         if (!f.exists())
             Util.extract("/resources/lib/beanshell-core.jar", f);
@@ -86,6 +88,11 @@ public class SolusRpg extends JavaPlugin {
 
         if (!f.exists())
             Util.extract("/resources/Classless.yml", f);
+
+        f = new File(Directories.CONFIG + "block_densities.yml");
+
+        if (!f.exists())
+            Util.extract("/resource/block_densities.yml", f);
 
         OutputFormatter.registerFormatter(new SimpleFormatter());
 
@@ -98,6 +105,8 @@ public class SolusRpg extends JavaPlugin {
 	SolusRpg.log(Level.INFO, "Loaded {0} phrase{1}.", PhraseManager.size(), PhraseManager.size() != 1 ? "s" : "");
         SolusRpg.log(Level.INFO, "Loaded {0} item group{1}.", ItemGroups.size(), ItemGroups.size() != 1 ? "s" : "");
         SolusRpg.log(Level.INFO, "Loaded {0} specialization tree{1}.", SpecializationManager.size(), SpecializationManager.size() != 1 ? "s" : "");
+        SolusRpg.log(Level.INFO, "Loaded {0} custom block densit{1}.", DensityManager.size(), DensityManager.size() != 1 ? "ies" : "y");
+        SolusRpg.log(Level.INFO, "Loaded {0} chat channel{1}.", ChannelManager.size(), ChannelManager.size() != 1 ? "s" : "");
 	SolusRpg.log(Level.INFO, "SolusRpg enabled in {0} milliseconds.", System.currentTimeMillis() - start);
     }
 

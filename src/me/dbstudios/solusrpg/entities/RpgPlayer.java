@@ -11,10 +11,11 @@ import me.dbstudios.solusrpg.chat.ChatChannel;
 import me.dbstudios.solusrpg.entities.conf.*;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
+import me.dbstudios.solusrpg.managers.ChannelManager;
 import me.dbstudios.solusrpg.managers.ClassManager;
 import me.dbstudios.solusrpg.managers.LevelManager;
+import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
-import me.dbstudios.solusrpg.managers.SpecializationManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Metadatable;
 import me.dbstudios.solusrpg.util.Util;
@@ -544,5 +545,56 @@ public class RpgPlayer implements Metadatable<String, Object> {
 
     public ChatChannel getActiveChannel() {
         return this.activeChannel;
+    }
+
+    public RpgPlayer setActiveChannel() {
+        return this.setActiveChannel(this.getConfiguration().getString("player.channel", this.activeChannel != null ? activeChannel.getSystemName() : null));
+    }
+
+    public RpgPlayer setActiveChannel(String name) {
+        if (name != null && ChannelManager.channelExists(name)) {
+            this.activeChannel = ChannelManager.getChannel(name);
+        } else if (name == null) {
+            List<ChatChannel> channels = ChannelManager.getJoinedChannels(this);
+
+            if (channels.size() > 0)
+                this.activeChannel = channels.get(0);
+            else
+                this.activeChannel = null;
+        }
+
+        if (this.activeChannel != null && PhraseManager.phraseExists("player.focused-channel")) {
+            Map<String, String> args = new HashMap<>();
+
+            args.put("symbol", activeChannel.getSymbol());
+            args.put("channel", activeChannel.getName());
+            args.put("channel-sysname", activeChannel.getSystemName());
+            args.put("range", activeChannel.getRange() + "");
+            args.put("rf-tolerance", activeChannel.getRangeFactorTolerance() + "");
+            args.put("mf-tolerance", activeChannel.getMaterialFactorTolerance() + "");
+
+            this.sendEventMessage(PhraseManager.getPhrase("chat.focused-channel"), args);
+        }
+
+        return this;
+    }
+
+    public RpgPlayer joinChannel(ChatChannel channel) {
+        channel.addMember(this);
+
+        if (PhraseManager.phraseExists("player.joined-channel")) {
+            Map<String, String> args = new HashMap<>();
+
+            args.put("symbol", channel.getSymbol());
+            args.put("channel", channel.getName());
+            args.put("channel-sysname", channel.getSystemName());
+            args.put("range", channel.getRange() + "");
+            args.put("rf-tolerance", channel.getRangeFactorTolerance() + "");
+            args.put("mf-tolerance", channel.getMaterialFactorTolerance() + "");
+
+            this.sendEventMessage(PhraseManager.getPhrase("chat.joined-channel"), args);
+        }
+
+        return this;
     }
 }

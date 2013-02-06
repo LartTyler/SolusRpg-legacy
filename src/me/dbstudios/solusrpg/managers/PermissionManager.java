@@ -22,4 +22,16 @@ public class PermissionManager {
     public static boolean hasPermission(CommandSender sender, String perm, boolean def) {
         return sender.isOp() || permission.has(sender, "dbstudios.solusrpg." + perm) || def;
     }
+
+    public static boolean hasAnyPermission(CommandSender sender, String... perms) {
+        return PermissionManager.hasAnyPermission(sender, false, perms);
+    }
+
+    public static boolean hasAnyPermission(CommandSender sender, boolean def, String... perms) {
+        for (String s : perms)
+            if (PermissionManager.hasPermission(sender, s, def))
+                return true;
+
+        return false;
+    }
 }

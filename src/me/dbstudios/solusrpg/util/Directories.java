@@ -18,7 +18,8 @@ public enum Directories {
     CLASSES(BASE + "classes::"),
     CHAT(BASE + "chat::"),
     CHAT_CHANNELS(CHAT + "channels::"),
-    DATA(BASE + "data::");
+    DATA(BASE + "data::"),
+    LIBRARIES("plugins::lib::");
 
     private final String path;
 

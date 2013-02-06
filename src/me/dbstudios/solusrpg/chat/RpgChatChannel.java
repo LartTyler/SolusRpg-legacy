@@ -7,19 +7,27 @@ package me.dbstudios.solusrpg.chat;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.exceptions.ChannelConfigurationException;
 import me.dbstudios.solusrpg.managers.ChannelManager;
+import me.dbstudios.solusrpg.managers.DensityManager;
+import me.dbstudios.solusrpg.managers.PermissionManager;
+import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.BlockIterator;
 
 /**
  *
@@ -50,6 +58,10 @@ public class RpgChatChannel implements ChatChannel {
             throw new ChannelConfigurationException("Could not find configuration for " + systemName + ".");
 
         FileConfiguration conf = YamlConfiguration.loadConfiguration(f);
+
+        for (String world : Util.toTypedList(conf.getList("channel.worlds", null), String.class))
+            if (Bukkit.getWorld(world) != null)
+                validWorlds.add(Bukkit.getWorld(world).getUID());
 
         this.systemName = systemName;
         this.name = conf.getString("channel.name", "Chat Channel");
@@ -130,7 +142,14 @@ public class RpgChatChannel implements ChatChannel {
             double rf = Util.getRangeFactor(this, Util.getDistance(sender, member));
             double mf = 0.0;
 
-            // Perform block ray-tracing here to get MF
+            BlockIterator it = new BlockIterator(sender.getWorld(), sender.getLocation().toVector(), member.getLocation().toVector(), 2.0, (int)Math.ceil(Util.getDistance(sender, member)));
+
+            while (it.hasNext()) {
+                Block b = it.next();
+
+                if (DensityManager.hasCustomDensity(b) || (!DensityManager.hasCustomDensity(b) && b.getType().isSolid()))
+                    mf += DensityManager.getBlockDensity(b);
+            }
 
             double obfusFactor = ((rf >= this.rfTolerance ? rf : 0.0) + (mf >= this.mfTolerance ? mf : 0.0)) / 100.0;
             String msgToSend = "";
@@ -159,20 +178,42 @@ public class RpgChatChannel implements ChatChannel {
         return this.sendMessage(sender, msg);
     }
 
-    public int sendBroadcast(RpgPlayer sender, String msg) {
-        int received = 0;
+    public void sendBroadcast(RpgPlayer sender, String msg) {
+        String formatted = format;
 
-        // Message broadcast code
+        formatted = formatted.replaceAll("(?i)\\{symbol\\}", this.symbol);
+        formatted = formatted.replaceAll("(?i)\\{channel\\}", this.name);
+        formatted = formatted.replaceAll("(?i)\\{sender\\}", sender.getDisplayName());
+        formatted = formatted.replaceAll("(?i)\\{sender-name\\}", sender.getName());
+        formatted = formatted.replaceAll("(?i)\\{message\\}", msg);
 
-        return received;
+        for (ChatColor c : ChatColor.values())
+            formatted = formatted.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
+
+        for (RpgPlayer member : members)
+            if (member != sender)
+                member.sendMessage(formatted);
     }
 
-    public int sendBroadcast(RpgPlayer sender, String msg, Object... args) {
+    public void sendBroadcast(RpgPlayer sender, String msg, Object... args) {
         if (args != null)
             for (int i = 0; i < args.length; i++)
                 msg = msg.replaceAll("(?i)\\{" + i + "\\}", args[i].toString());
 
-        return this.sendBroadcast(sender, msg);
+        this.sendBroadcast(sender, msg);
+    }
+
+    public void sendBroadcast(String msg) {
+        for (RpgPlayer member : members)
+            member.sendMessage(msg);
+    }
+
+    public void sendBroadcast(String msg, Object... args) {
+        if (args != null)
+            for (int i = 0; i < args.length; i++)
+                msg = msg.replaceAll("(?i)\\{" + i + "\\}", args[i].toString());
+
+        this.sendBroadcast(msg);
     }
 
     public int getMaxPopulation() {
@@ -189,6 +230,14 @@ public class RpgChatChannel implements ChatChannel {
 
     public double getMaterialFactorTolerance() {
         return this.mfTolerance;
+    }
+
+    public boolean isBanned(RpgPlayer player) {
+        return PermissionManager.hasPermission(player.getBasePlayer(), "chat.banned." + this.systemName);
+    }
+
+    public boolean isModerator(RpgPlayer player) {
+        return PermissionManager.hasPermission(player.getBasePlayer(), "chat.moderator." + this.systemName);
     }
 
     public boolean isChattableWorld(World world) {
@@ -216,27 +265,31 @@ public class RpgChatChannel implements ChatChannel {
     }
 
     public boolean canJoin(RpgPlayer player) {
-        return true;
+        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.join." + this.systemName, "chat.general." + this.systemName, "chat.moderate." + this.systemName);
     }
 
     public boolean canChat(RpgPlayer player) {
-        return true;
+        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.chat." + this.systemName, "chat.general." + this.systemName, "chat.moderate." + this.systemName);
     }
 
     public boolean canLeave(RpgPlayer player) {
-        return true;
+        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.leave." + this.systemName, "chat.general." + this.systemName, "chat.moderate." + this.systemName);
     }
 
     public boolean canKick(RpgPlayer player, RpgPlayer target) {
-        return true;
+        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.kick." + this.systemName, "chat.moderate." + this.systemName) && !PermissionManager.hasPermission(target.getBasePlayer(), "chat.moderate." + this.systemName);
     }
 
     public boolean canBan(RpgPlayer player, RpgPlayer target) {
-        return true;
+        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.ban." + this.systemName, "chat.moderate." + this.systemName) && !PermissionManager.hasPermission(target.getBasePlayer(), "chat.moderate." + this.systemName);
     }
 
     public boolean canPardon(RpgPlayer player) {
-        return true;
+        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.pardon." + this.systemName, "chat.moderate." + this.systemName);
+    }
+
+    public boolean hasMember(RpgPlayer player) {
+        return members.contains(player);
     }
 
     public File getFile() {
@@ -245,5 +298,41 @@ public class RpgChatChannel implements ChatChannel {
 
     public FileConfiguration getConfiguration() {
         return YamlConfiguration.loadConfiguration(this.getFile());
+    }
+
+    public void addMember(RpgPlayer player) {
+        if (!members.contains(player)) {
+            members.add(player);
+
+            if (PhraseManager.phraseExists("chat.join-channel-announcement")) {
+                String phrase = PhraseManager.getPhrase("chat.join-channel-announcement");
+
+                phrase = phrase.replaceAll("(?i)\\{player\\}", player.getDisplayName());
+                phrase = phrase.replaceAll("(?i)\\{player-name\\}", player.getName());
+                phrase = phrase.replaceAll("(?i)\\{symbol\\}", this.symbol);
+                phrase = phrase.replaceAll("(?i)\\{channel\\}", this.name);
+                phrase = phrase.replaceAll("(?i)\\{channel-sysname\\}", this.systemName);
+                phrase = phrase.replaceAll("(?i)\\{range\\}", this.range + "");
+                phrase = phrase.replaceAll("(?i)\\{rf-tolerance\\}", this.rfTolerance + "");
+                phrase = phrase.replaceAll("(?i)\\{mf-tolerance\\}", this.mfTolerance + "");
+
+                this.sendBroadcast(phrase);
+            }
+        }
+    }
+
+    public void removeMember(RpgPlayer player) {
+        if (members.contains(player)) {
+            members.remove(player);
+
+            if (player.getActiveChannel() == this) {
+                List<ChatChannel> channels = ChannelManager.getJoinedChannels(player);
+
+                if (channels.size() > 0)
+                    player.setActiveChannel(channels.get(0).getSystemName());
+                else
+                    player.setActiveChannel(null);
+            }
+        }
     }
 }

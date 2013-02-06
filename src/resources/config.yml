@@ -1,4 +1,18 @@
 config:
+  densities:
+    base-hardness-multiplier: 15.0      # The number to multiply a block's hardness by if a density is not set in block_densities.yml
+  chat:
+    format: "{green}[{symbol}] {sender}: {aqua}{message}"     # The default message format to use, if one is not provided in the channel definition
+    range-factor-algorithm: "({distance} / {range}) / 4"      # The default algorithm to use to determine how range affects messages
+    range-factor-tolerance: 20.0                              # The smallest range factor value that can affect messages
+    material-factor-tolerance: 10.0                           # The smallest material factor value that can affect messages
+    obfus-tolerance: 15.0                                     # The smallest obfuscation value (how "mangled" a message is) that can affect messages
+    announce-on:
+      join: true
+      leave: true
+      ban: true
+      kick: true
+      pardon: true
   phrases:
     player:
       use-deny: "{aqua}Your class ({green}{class}) {aqua}cannot use {green}{item}{aqua}."
@@ -8,6 +22,14 @@ config:
       craft-deny: "{aqua}Your class ({green}{class}{aqua}) cannot craft {green}{item}{aqua}."
       smelt-deny: "{aqua}Your class ({green}{class}{aqua}) cannot smelt {green}{item}{aqua}."
       no-damage: "{aqua}Your blows fail to damage {green}{target}{aqua}."
+    chat:
+      joined-channel: "{aqua}You have joined {green}[{symbol}] {channel}{aqua}."
+      focused-channel: "{aqua}Chat focus has been set on {green}{channel}{aqua}."
+      join-channel-announcement: "{green}{player} {aqua}has joined the channel."
+      leave-channel-announcement: "{green}{player} {aqua}has left the channel."
+      player-banned-announcement: "{green}{player} {aqua}has banned {green}{target} {aqua}from the channel."
+      player-kicked-announcement: "{green}{player} {aqua}has kicked {green}{target} {aqua}from the channel."
+      player-pardon-announcement: "{green}{player} {aqua}has pardoned {green}{target} {aqua} from his ban."
   leveling:
     level-cap: 20
     experience-algorithm: "50 * ({level} - 1)"

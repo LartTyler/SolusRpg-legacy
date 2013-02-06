@@ -17,6 +17,7 @@ import me.dbstudios.solusrpg.event.block.RpgBlockPlaceEvent;
 import me.dbstudios.solusrpg.event.inventory.RpgInventoryCloseEvent;
 import me.dbstudios.solusrpg.event.inventory.RpgInventoryOpenEvent;
 import me.dbstudios.solusrpg.event.player.*;
+import me.dbstudios.solusrpg.managers.ChannelManager;
 import me.dbstudios.solusrpg.managers.LevelManager;
 import me.dbstudios.solusrpg.managers.PhraseManager;
 import me.dbstudios.solusrpg.managers.PlayerManager;
@@ -49,6 +50,9 @@ public class RpgStockListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onRpgPlayerJoin(RpgPlayerJoinEvent ev) {
         SpecializationManager.applyOwnedSpecializations(ev.getPlayer());
+        ChannelManager.handleAutojoins(ev.getPlayer());
+
+        ev.getPlayer().setActiveChannel();
 
         FileConfiguration conf = YamlConfiguration.loadConfiguration(new File(Directories.DATA + "config.yml"));
 
