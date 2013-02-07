@@ -13,10 +13,14 @@ import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
 import me.dbstudios.solusrpg.chat.ChatChannel;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
+import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.managers.ChannelManager;
+import me.dbstudios.solusrpg.managers.LevelManager;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -157,6 +161,18 @@ public class Util {
         return false;
     }
 
+    public static String prettifyString(String str, boolean ucWords) {
+        String pretty = "";
+
+        for (String s : str.split("_"))
+            if (ucWords)
+                pretty += " " + s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+            else
+                pretty += " " + s.toLowerCase();
+
+        return pretty.substring(1);
+    }
+
     public static double getDistance(RpgPlayer a, RpgPlayer b) {
         return Util.getDistance(a.getLocation(), b.getLocation());
     }
@@ -185,5 +201,88 @@ public class Util {
             } catch (EvalError e) {}
 
         return raw != null ? (double)raw : -1.0;
+    }
+
+    public static String buildPhrase(String phrase, RpgPlayer player) {
+        return Util.buildPhrase(phrase, player, Util.buildPhraseArgs(player));
+    }
+
+    public static String buildPhrase(String phrase, RpgPlayer player, Map<String, String> args) {
+        for (String key : args.keySet())
+            phrase = phrase.replaceAll("(?i)\\{" + key + "\\}", args.get(key));
+
+        return phrase;
+    }
+
+    public static Map<String, String> buildPhraseArgs(RpgPlayer player) {
+        Map<String, String> args = new HashMap<>();
+
+        args.put("x-coord", player.getLocation().getX() + "");
+        args.put("y-coord", player.getLocation().getY() + "");
+        args.put("z-coord", player.getLocation().getZ() + "");
+        args.put("x-block-coord", player.getLocation().getBlockX() + "");
+        args.put("y-block-coord", player.getLocation().getBlockY() + "");
+        args.put("z-block-coord", player.getLocation().getBlockZ() + "");
+        args.put("world", player.getWorld().getName());
+        args.put("player", player.getDisplayName());
+        args.put("player-name", player.getName());
+
+        switch (player.getWorld().getEnvironment()) {
+            case THE_END:
+                args.put("dimension-symbol", "E");
+                args.put("dimension-name", "The End");
+
+                break;
+            case NETHER:
+                args.put("dimension-symbol", "N");
+                args.put("dimension-name", "Nether");
+
+                break;
+            case NORMAL:
+                args.put("dimension-symbol", "O");
+                args.put("dimension-name", "Overworld");
+
+                break;
+        }
+
+        switch (player.getGameMode()) {
+            case ADVENTURE:
+                args.put("gamemode-symbol", "A");
+                args.put("gamemode-name", "Adventure");
+
+                break;
+            case CREATIVE:
+                args.put("gamemode-symbol", "C");
+                args.put("gamemode-name", "Creative");
+
+                break;
+            case SURVIVAL:
+                args.put("gamemode-symbol", "S");
+                args.put("gamemode-name", "Survival");
+
+                break;
+        }
+
+        args.put("health", player.getHealth() + "");
+        args.put("max-health", player.getMaxHealth() + "");
+
+        for (StatType t : StatType.values())
+            args.put(t.name().toLowerCase(), player.getStat(t).getValue() + "");
+
+        args.put("channel-name", player.getActiveChannel().getName());
+        args.put("channel-symbol", player.getActiveChannel().getSymbol());
+        args.put("channel-sysname", player.getActiveChannel().getSystemName());
+        args.put("item-in-hand", Util.prettifyString(Util.getItemName(player.getItemInHand()), true));
+        args.put("headgear", Util.prettifyString(Util.getItemName(player.getInventory().getHelmet()), true));
+        args.put("chestpiece", Util.prettifyString(Util.getItemName(player.getInventory().getChestplate()), true));
+        args.put("leggings", Util.prettifyString(Util.getItemName(player.getInventory().getLeggings()), true));
+        args.put("boots", Util.prettifyString(Util.getItemName(player.getInventory().getBoots()), true));
+        args.put("level", player.getLevel() + "");
+        args.put("exp", player.getExp() + "");
+        args.put("exp-to-level", LevelManager.getExpToLevel(player.getLevel() + 1) + "");
+        args.put("class-name", player.getRpgClass().getName());
+        args.put("class-sysname", player.getRpgClass().getSystemName());
+
+        return args;
     }
 }

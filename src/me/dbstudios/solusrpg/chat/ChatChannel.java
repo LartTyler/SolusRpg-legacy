@@ -54,4 +54,7 @@ public interface ChatChannel {
     public FileConfiguration getConfiguration();
     public void addMember(RpgPlayer player);
     public void removeMember(RpgPlayer player);
+    public void banMember(RpgPlayer player);
+    public void pardonMember(RpgPlayer player);
+    public void kickMember(RpgPlayer player);
 }

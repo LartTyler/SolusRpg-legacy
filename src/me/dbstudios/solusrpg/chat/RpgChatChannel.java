@@ -7,7 +7,6 @@ package me.dbstudios.solusrpg.chat;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -130,10 +129,9 @@ public class RpgChatChannel implements ChatChannel {
 
         String formatted = format;
 
-        formatted = formatted.replaceAll("(?i)\\{symbol\\}", this.symbol);
-        formatted = formatted.replaceAll("(?i)\\{channel\\}", this.name);
-        formatted = formatted.replaceAll("(?i)\\{sender\\}", sender.getDisplayName());
-        formatted = formatted.replaceAll("(?i)\\{sender-name\\}", sender.getName());
+        formatted = formatted.replaceAll("(?i)\\{channel-symbol\\}", this.symbol);
+        formatted = formatted.replaceAll("(?i)\\{channel-name\\}", this.name);
+        formatted = Util.buildPhrase(formatted, sender);
 
         for (ChatColor c : ChatColor.values())
             formatted = formatted.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
@@ -181,11 +179,10 @@ public class RpgChatChannel implements ChatChannel {
     public void sendBroadcast(RpgPlayer sender, String msg) {
         String formatted = format;
 
-        formatted = formatted.replaceAll("(?i)\\{symbol\\}", this.symbol);
-        formatted = formatted.replaceAll("(?i)\\{channel\\}", this.name);
-        formatted = formatted.replaceAll("(?i)\\{sender\\}", sender.getDisplayName());
-        formatted = formatted.replaceAll("(?i)\\{sender-name\\}", sender.getName());
+        formatted = formatted.replaceAll("(?i)\\{channel-symbol\\}", this.symbol);
+        formatted = formatted.replaceAll("(?i)\\{channel-name\\}", this.name);
         formatted = formatted.replaceAll("(?i)\\{message\\}", msg);
+        formatted = Util.buildPhrase(formatted, sender);
 
         for (ChatColor c : ChatColor.values())
             formatted = formatted.replaceAll("(?i)\\{" + c.name() + "\\}", c.toString());
@@ -305,18 +302,13 @@ public class RpgChatChannel implements ChatChannel {
             members.add(player);
 
             if (PhraseManager.phraseExists("chat.join-channel-announcement")) {
-                String phrase = PhraseManager.getPhrase("chat.join-channel-announcement");
+                Map<String, String> args = Util.buildPhraseArgs(player);
 
-                phrase = phrase.replaceAll("(?i)\\{player\\}", player.getDisplayName());
-                phrase = phrase.replaceAll("(?i)\\{player-name\\}", player.getName());
-                phrase = phrase.replaceAll("(?i)\\{symbol\\}", this.symbol);
-                phrase = phrase.replaceAll("(?i)\\{channel\\}", this.name);
-                phrase = phrase.replaceAll("(?i)\\{channel-sysname\\}", this.systemName);
-                phrase = phrase.replaceAll("(?i)\\{range\\}", this.range + "");
-                phrase = phrase.replaceAll("(?i)\\{rf-tolerance\\}", this.rfTolerance + "");
-                phrase = phrase.replaceAll("(?i)\\{mf-tolerance\\}", this.mfTolerance + "");
+                args.put("channel-name", this.name);
+                args.put("channel-symbol", this.symbol);
+                args.put("channel-sysname", this.systemName);
 
-                this.sendBroadcast(phrase);
+                this.sendBroadcast(Util.buildPhrase(PhraseManager.getPhrase("chat.join-channel-announcement"), player, args));
             }
         }
     }
@@ -334,5 +326,49 @@ public class RpgChatChannel implements ChatChannel {
                     player.setActiveChannel(null);
             }
         }
+    }
+
+    public void banMember(RpgPlayer player) {
+        PermissionManager.addPermission(player.getBasePlayer(), "chat.banned." + this.systemName);
+
+        this.removeMember(player);
+
+        if (PhraseManager.phraseExists("chat.player-banned-announcement")) {
+            Map<String, String> args = Util.buildPhraseArgs(player);
+
+            args.put("channel-name", this.name);
+            args.put("channel-symbol", this.symbol);
+            args.put("channel-sysname", this.systemName);
+
+            this.sendBroadcast(Util.buildPhrase(PhraseManager.getPhrase("chat.player-banned-announcement"), player, args));
+        }
+    }
+
+    public void pardonMember(RpgPlayer player) {
+        PermissionManager.removePermission(player.getBasePlayer(), "chat.banned." + this.systemName);
+
+        if (PhraseManager.phraseExists("chat.player-pardon-announcement")) {
+            Map<String, String> args = Util.buildPhraseArgs(player);
+
+            args.put("channel-name", this.name);
+            args.put("channel-symbol", this.symbol);
+            args.put("channel-sysname", this.systemName);
+
+            this.sendBroadcast(Util.buildPhrase(PhraseManager.getPhrase("chat.player-pardon-announcement"), player, args));
+        }
+    }
+
+    public void kickMember(RpgPlayer player) {
+        if (PhraseManager.phraseExists("chat.player-kicked-announcement")) {
+            Map<String, String> args = Util.buildPhraseArgs(player);
+
+            args.put("channel-name", this.name);
+            args.put("channel-symbol", this.symbol);
+            args.put("channel-sysname", this.systemName);
+
+            this.sendBroadcast(Util.buildPhrase(PhraseManager.getPhrase("chat.player-kicked-announcement"), player, args));
+        }
+
+        this.removeMember(player);
     }
 }

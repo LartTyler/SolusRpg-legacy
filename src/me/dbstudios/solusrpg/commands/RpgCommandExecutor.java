@@ -27,6 +27,8 @@ public class RpgCommandExecutor implements CommandExecutor {
             return RpgSetSpawnCommand.onCommand(sender, command, args);
         else if (args.length >= 2 && args[0].equalsIgnoreCase("respec"))
             return RpgRespecCommand.onCommand(sender, command, args);
+        else if (args.length >= 2 && args[0].equalsIgnoreCase("chat"))
+            return RpgChatCommand.onCommand(sender, command, args);
 
 	return false;
     }

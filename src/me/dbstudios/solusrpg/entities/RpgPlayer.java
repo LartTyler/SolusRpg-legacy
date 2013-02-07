@@ -20,7 +20,9 @@ import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Metadatable;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -29,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.PlayerInventory;
 import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.inventory.SpoutItemStack;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 /**
@@ -596,5 +599,16 @@ public class RpgPlayer implements Metadatable<String, Object> {
         }
 
         return this;
+    }
+
+    public GameMode getGameMode() {
+        return basePlayer.getGameMode();
+    }
+
+    public SpoutItemStack getItemInHand() {
+        if (basePlayer.getItemInHand() != null)
+            return new SpoutItemStack(basePlayer.getItemInHand());
+
+        return null;
     }
 }

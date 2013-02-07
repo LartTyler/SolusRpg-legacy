@@ -4,6 +4,7 @@ package me.dbstudios.solusrpg.managers;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * @author Tyler Lartonoix
@@ -33,5 +34,13 @@ public class PermissionManager {
                 return true;
 
         return false;
+    }
+
+    public static boolean addPermission(Player player, String perm) {
+        return permission.playerAdd(player, "dbstudios.solusrpg." + perm);
+    }
+
+    public static boolean removePermission(Player player, String perm) {
+        return permission.playerRemove(player, "dbstudios.solusrpg." + perm);
     }
 }
