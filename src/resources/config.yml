@@ -25,6 +25,7 @@ config:
     chat:
       joined-channel: "{aqua}You have joined {green}[{symbol}] {channel}{aqua}."
       focused-channel: "{aqua}Chat focus has been set on {green}{channel}{aqua}."
+      leave-channel: "{aqua}You have left {green}[{symbol}] {channel}{aqua}."
       join-channel-announcement: "{green}{player} {aqua}has joined the channel."
       leave-channel-announcement: "{green}{player} {aqua}has left the channel."
       player-banned-announcement: "{green}{player} {aqua}has banned {green}{target} {aqua}from the channel."

@@ -7,6 +7,8 @@ package me.dbstudios.solusrpg.managers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +53,24 @@ public class ChannelManager {
             }
     }
 
+    public static Map<String, ChatChannel> getChannelMap() {
+        return Collections.unmodifiableMap(channels);
+    }
+
+    public static Collection<ChatChannel> getChannels() {
+        return channels.values();
+    }
+
     public static ChatChannel getChannel(String channel) {
         return channels.get(channel);
+    }
+
+    public static ChatChannel matchChannel(String name) {
+        for (ChatChannel c : channels.values())
+            if (c.getSystemName().toLowerCase().startsWith(name.toLowerCase()))
+                return c;
+
+        return null;
     }
 
     public static boolean channelExists(String channel) {

@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.Set;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -46,8 +47,8 @@ public interface ChatChannel {
     public boolean canJoin(RpgPlayer player);
     public boolean canChat(RpgPlayer player);
     public boolean canLeave(RpgPlayer player);
-    public boolean canKick(RpgPlayer player, RpgPlayer target);
-    public boolean canBan(RpgPlayer player, RpgPlayer target);
+    public boolean canKick(CommandSender sender, RpgPlayer target);
+    public boolean canBan(CommandSender sender, RpgPlayer target);
     public boolean canPardon(RpgPlayer player);
     public boolean hasMember(RpgPlayer player);
     public File getFile();

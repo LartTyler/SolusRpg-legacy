@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.BlockIterator;
@@ -273,20 +274,16 @@ public class RpgChatChannel implements ChatChannel {
         return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.leave." + this.systemName, "chat.general." + this.systemName, "chat.moderate." + this.systemName);
     }
 
-    public boolean canKick(RpgPlayer player, RpgPlayer target) {
-        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.kick." + this.systemName, "chat.moderate." + this.systemName) && !PermissionManager.hasPermission(target.getBasePlayer(), "chat.moderate." + this.systemName);
+    public boolean canKick(CommandSender sender, RpgPlayer target) {
+        return PermissionManager.hasAnyPermission(sender, "chat.kick." + this.systemName, "chat.moderate." + this.systemName) && !PermissionManager.hasPermission(target.getBasePlayer(), "chat.moderate." + this.systemName);
     }
 
-    public boolean canBan(RpgPlayer player, RpgPlayer target) {
-        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.ban." + this.systemName, "chat.moderate." + this.systemName) && !PermissionManager.hasPermission(target.getBasePlayer(), "chat.moderate." + this.systemName);
+    public boolean canBan(CommandSender sender, RpgPlayer target) {
+        return PermissionManager.hasAnyPermission(sender, "chat.ban." + this.systemName, "chat.moderate." + this.systemName) && !PermissionManager.hasPermission(target.getBasePlayer(), "chat.moderate." + this.systemName);
     }
 
     public boolean canPardon(RpgPlayer player) {
         return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.pardon." + this.systemName, "chat.moderate." + this.systemName);
-    }
-
-    public boolean hasMember(RpgPlayer player) {
-        return members.contains(player);
     }
 
     public File getFile() {
@@ -316,6 +313,16 @@ public class RpgChatChannel implements ChatChannel {
     public void removeMember(RpgPlayer player) {
         if (members.contains(player)) {
             members.remove(player);
+
+            if (PhraseManager.phraseExists("chat.leave-channel-announcement")) {
+                Map<String, String> args = Util.buildPhraseArgs(player);
+
+                args.put("channel-name", this.name);
+                args.put("channel-symbol", this.symbol);
+                args.put("channel-sysname", this.systemName);
+
+                this.sendBroadcast(Util.buildPhrase(PhraseManager.getPhrase("chat.leave-channel-announcement"), player, args));
+            }
 
             if (player.getActiveChannel() == this) {
                 List<ChatChannel> channels = ChannelManager.getJoinedChannels(player);

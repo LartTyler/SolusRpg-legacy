@@ -551,7 +551,12 @@ public class RpgPlayer implements Metadatable<String, Object> {
     }
 
     public RpgPlayer setActiveChannel() {
-        return this.setActiveChannel(this.getConfiguration().getString("player.channel", this.activeChannel != null ? activeChannel.getSystemName() : null));
+        String cName = this.getConfiguration().getString("player.channel", null);
+
+        if (cName == null && this.activeChannel != null)
+            cName = activeChannel.getSystemName();
+
+        return this.setActiveChannel(cName);
     }
 
     public RpgPlayer setActiveChannel(String name) {
@@ -566,18 +571,8 @@ public class RpgPlayer implements Metadatable<String, Object> {
                 this.activeChannel = null;
         }
 
-        if (this.activeChannel != null && PhraseManager.phraseExists("player.focused-channel")) {
-            Map<String, String> args = new HashMap<>();
-
-            args.put("symbol", activeChannel.getSymbol());
-            args.put("channel", activeChannel.getName());
-            args.put("channel-sysname", activeChannel.getSystemName());
-            args.put("range", activeChannel.getRange() + "");
-            args.put("rf-tolerance", activeChannel.getRangeFactorTolerance() + "");
-            args.put("mf-tolerance", activeChannel.getMaterialFactorTolerance() + "");
-
-            this.sendEventMessage(PhraseManager.getPhrase("chat.focused-channel"), args);
-        }
+        if (this.activeChannel != null && PhraseManager.phraseExists("player.focused-channel"))
+            this.sendEventMessage(PhraseManager.getPhrase("chat.focused-channel"), Util.buildPhraseArgs(this));
 
         return this;
     }
@@ -586,16 +581,35 @@ public class RpgPlayer implements Metadatable<String, Object> {
         channel.addMember(this);
 
         if (PhraseManager.phraseExists("player.joined-channel")) {
-            Map<String, String> args = new HashMap<>();
+            Map<String, String> args = Util.buildPhraseArgs(this);
 
-            args.put("symbol", channel.getSymbol());
-            args.put("channel", channel.getName());
+            args.put("channel-name", channel.getName());
+            args.put("channel-symbol", channel.getSymbol());
             args.put("channel-sysname", channel.getSystemName());
-            args.put("range", channel.getRange() + "");
-            args.put("rf-tolerance", channel.getRangeFactorTolerance() + "");
-            args.put("mf-tolerance", channel.getMaterialFactorTolerance() + "");
 
             this.sendEventMessage(PhraseManager.getPhrase("chat.joined-channel"), args);
+        }
+
+        return this;
+    }
+
+    public RpgPlayer leaveChannel() {
+        return this.leaveChannel(this.activeChannel);
+    }
+
+    public RpgPlayer leaveChannel(ChatChannel channel) {
+        if (channel.isInChannel(this)) {
+            channel.removeMember(this);
+
+            if (PhraseManager.phraseExists("player.leave-channel")) {
+                Map<String, String> args = Util.buildPhraseArgs(this);
+
+                args.put("channel-name", channel.getName());
+                args.put("channel-symbol", channel.getSymbol());
+                args.put("channel-sysname", channel.getSystemName());
+
+                this.sendEventMessage(PhraseManager.getPhrase("chat.joined-channel"), args);
+            }
         }
 
         return this;
