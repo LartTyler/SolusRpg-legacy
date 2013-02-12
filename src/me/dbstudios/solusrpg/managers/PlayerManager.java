@@ -72,4 +72,12 @@ public class PlayerManager {
     public static void reloadPlayer(Player player) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(SolusRpg.getInstance(), new PlayerReloadTask(player), 5);
     }
+
+    public static RpgPlayer matchPlayer(String name) {
+        for (RpgPlayer p : players.values())
+            if (p.getName().toLowerCase().startsWith(name.toLowerCase()))
+                return p;
+
+        return null;
+    }
 }

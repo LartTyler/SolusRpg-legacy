@@ -263,7 +263,7 @@ public class RpgChatChannel implements ChatChannel {
     }
 
     public boolean canJoin(RpgPlayer player) {
-        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.join." + this.systemName, "chat.general." + this.systemName, "chat.moderate." + this.systemName);
+        return PermissionManager.hasAnyPermission(player.getBasePlayer(), "chat.join." + this.systemName, "chat.general." + this.systemName, "chat.moderate." + this.systemName) && !PermissionManager.hasPermission(player.getBasePlayer(), "chat.banned." + this.systemName);
     }
 
     public boolean canChat(RpgPlayer player) {
@@ -336,10 +336,6 @@ public class RpgChatChannel implements ChatChannel {
     }
 
     public void banMember(RpgPlayer player) {
-        PermissionManager.addPermission(player.getBasePlayer(), "chat.banned." + this.systemName);
-
-        this.removeMember(player);
-
         if (PhraseManager.phraseExists("chat.player-banned-announcement")) {
             Map<String, String> args = Util.buildPhraseArgs(player);
 
@@ -349,6 +345,10 @@ public class RpgChatChannel implements ChatChannel {
 
             this.sendBroadcast(Util.buildPhrase(PhraseManager.getPhrase("chat.player-banned-announcement"), player, args));
         }
+        
+        PermissionManager.addPermission(player.getBasePlayer(), "chat.banned." + this.systemName);
+
+        this.removeMember(player);
     }
 
     public void pardonMember(RpgPlayer player) {

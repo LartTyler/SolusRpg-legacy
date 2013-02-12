@@ -38,7 +38,7 @@ public class RpgChatCommand {
                         if (player.getActiveChannel().canLeave(player))
                             player.leaveChannel();
                         else
-                            Util.sendMessage(sender, "{aqua}You do not have sufficient permissions to leavel {green}" + player.getActiveChannel().getName() + "{aqua}.");
+                            Util.sendMessage(sender, "{aqua}You do not have sufficient permissions to leave {green}" + player.getActiveChannel().getName() + "{aqua}.");
                     else
                         Util.sendMessage(sender, "{aqua}You cannot leave a channel if you aren't in any.");
                 } else {
@@ -66,6 +66,13 @@ public class RpgChatCommand {
                     } else {
                         Util.sendMessage(sender, "{aqua}No channel could be found matching '{green}" + args[2] + "{aqua}'.");
                     }
+                } else if (args[1].equalsIgnoreCase("focus")) {
+                    ChatChannel c = ChannelManager.matchChannel(args[2]);
+
+                    if (c != null)
+                        player.setActiveChannel(c.getName());
+                    else
+                        Util.sendMessage(sender, "{aqua}No channel could be found matching '{green}" + args[2] + "{aqua}'.");
                 } else if (args[1].equalsIgnoreCase("leave")) {
                     ChatChannel c = ChannelManager.matchChannel(args[2]);
 
@@ -74,6 +81,36 @@ public class RpgChatCommand {
                             player.leaveChannel(c);
                         else
                             Util.sendMessage(sender, "{aqua}No channel could be found matching '{green}" + args[2] + "{aqua}'.");
+                } else if (args[1].equalsIgnoreCase("kick")) {
+                    RpgPlayer target = PlayerManager.matchPlayer(args[2]);
+                    ChatChannel active = player.getActiveChannel();
+
+                    if (target != null && active.isInChannel(target) && active.canKick(sender, target))
+                        active.kickMember(target);
+                    else if (target == null)
+                        Util.sendMessage(sender, "{aqua}Could not match player with the name '{green}" + args[2] + "{aqua}'.");
+                    else
+                        Util.sendMessage(sender, "{aqua}You do not have sufficient permissions to ban {green}" + args[2] + " {aqua}from {green}" + active.getName() + "{aqua}.");
+                } else if (args[1].equalsIgnoreCase("ban")) {
+                    RpgPlayer target = PlayerManager.matchPlayer(args[2]);
+                    ChatChannel active = player.getActiveChannel();
+
+                    if (target != null && active.canBan(sender, target))
+                        active.banMember(target);
+                    else if (target == null)
+                        Util.sendMessage(sender, "{aqua}Could not match player with the name '{green}" + args[2] + "{aqua}'.");
+                    else
+                        Util.sendMessage(sender, "{aqua}You do not have sufficient permissions to ban {green}" + args[2] + " {aqua}from {green}" + active.getName() + "{aqua}.");
+                } else if (args[1].equalsIgnoreCase("pardon")) {
+                    RpgPlayer target = PlayerManager.matchPlayer(args[2]);
+                    ChatChannel active = player.getActiveChannel();
+
+                    if (target != null && active.canPardon(player))
+                        active.pardonMember(target);
+                    else if (target == null)
+                        Util.sendMessage(sender, "{aqua}Could not match play with the name '{green}" + args[2] + "{aqua}.");
+                    else
+                        Util.sendMessage(sender, "{aqua}You do not have sufficient permissions to pardon {green}" + args[2] + " {aqua}from {green}" + active.getName() + "{aqua}.");
                 } else {
                     return false;
                 }

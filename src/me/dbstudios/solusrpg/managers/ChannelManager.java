@@ -115,7 +115,7 @@ public class ChannelManager {
         List<ChatChannel> joined = new ArrayList<>();
 
         for (ChatChannel c : channels.values())
-            if (c.hasMember(player))
+            if (c.isInChannel(player))
                 joined.add(c);
 
         return joined;
