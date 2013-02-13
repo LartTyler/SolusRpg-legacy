@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package me.dbstudios.solusrpg.chat;
+package me.dbstudios.solusrpg.social.chat;
 
 import java.io.File;
 import java.util.Collections;
@@ -345,7 +345,7 @@ public class RpgChatChannel implements ChatChannel {
 
             this.sendBroadcast(Util.buildPhrase(PhraseManager.getPhrase("chat.player-banned-announcement"), player, args));
         }
-        
+
         PermissionManager.addPermission(player.getBasePlayer(), "chat.banned." + this.systemName);
 
         this.removeMember(player);

@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
-import me.dbstudios.solusrpg.chat.ChatChannel;
+import me.dbstudios.solusrpg.social.chat.ChatChannel;
 import me.dbstudios.solusrpg.entities.conf.*;
 import me.dbstudios.solusrpg.exceptions.IncompatibleStatTypeException;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;

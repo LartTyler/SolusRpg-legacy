@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import me.dbstudios.solusrpg.SolusRpg;
-import me.dbstudios.solusrpg.chat.ChatChannel;
+import me.dbstudios.solusrpg.social.chat.ChatChannel;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.entities.conf.StatType;
 import me.dbstudios.solusrpg.managers.ChannelManager;

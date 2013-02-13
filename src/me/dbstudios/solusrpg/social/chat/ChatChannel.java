@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package me.dbstudios.solusrpg.chat;
+package me.dbstudios.solusrpg.social.chat;
 
 import java.io.File;
 import java.util.Set;

@@ -5,7 +5,7 @@
 
 package me.dbstudios.solusrpg.commands;
 
-import me.dbstudios.solusrpg.chat.ChatChannel;
+import me.dbstudios.solusrpg.social.chat.ChatChannel;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.managers.ChannelManager;
 import me.dbstudios.solusrpg.managers.PermissionManager;
