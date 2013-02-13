@@ -35,6 +35,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.*;
 import org.getspout.spoutapi.event.spout.SpoutCraftEnableEvent;
+import org.getspout.spoutapi.event.spout.SpoutcraftFailedEvent;
 
 /**
  *
@@ -50,6 +51,11 @@ public class EventDistributor implements Listener {
         } else {
             ev.getPlayer().kickPlayer("[SolusRpg] An error occurred while initialization your player data. Please contact an admin, and make sure you are using the newest version of the Spout client.");
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onSpoutcraftFailed(SpoutcraftFailedEvent ev) {
+        ev.getPlayer().kickPlayer("[SolusRpg] SolusRpg requires you to use the Spoutcraft client. Please contact the server administrator for more information.");
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
