@@ -351,4 +351,13 @@ public class EventDistributor implements Listener {
             }
         }
     }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerChat(AsyncPlayerChatEvent ev) {
+        RpgPlayerChatEvent event = new RpgPlayerChatEvent(ev.getPlayer(), ev.getMessage());
+
+        Bukkit.getPluginManager().callEvent(event);
+
+        ev.setCancelled(true);
+    }
 }

@@ -12,12 +12,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import me.dbstudios.solusrpg.SolusRpg;
-import me.dbstudios.solusrpg.social.chat.ChatChannel;
-import me.dbstudios.solusrpg.social.chat.RpgChatChannel;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.exceptions.ChannelConfigurationException;
+import me.dbstudios.solusrpg.social.chat.ChatChannel;
+import me.dbstudios.solusrpg.social.chat.RpgChatChannel;
 import me.dbstudios.solusrpg.util.Directories;
 import me.dbstudios.solusrpg.util.Util;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -63,6 +64,14 @@ public class ChannelManager {
 
     public static ChatChannel getChannel(String channel) {
         return channels.get(channel);
+    }
+
+    public static void addPartyChat(UUID uid, /* Party */ChatChannel channel) {
+        channels.put(uid.toString(), channel);
+    }
+
+    public static void removePartyChat(UUID uid) {
+        channels.remove(uid.toString());
     }
 
     public static ChatChannel matchChannel(String name) {

@@ -360,4 +360,15 @@ public class RpgStockListener implements Listener {
     public void onRpgPlayerShootBow(RpgPlayerShootBowEvent ev) {
         arrowDamage.put(ev.getProjectile(), ev.getPlayer().getStat(StatType.STRENGTH).getValue());
     }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onRpgPlayerChat(RpgPlayerChatEvent ev) {
+        ev.setCancelled(!ev.getChannel().canChat(ev.getPlayer()));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void finalOnRpgPlayerChat(RpgPlayerChatEvent ev) {
+        if (!ev.isCancelled())
+            ev.getChannel().sendMessage(ev.getPlayer(), ev.getMessage());
+    }
 }

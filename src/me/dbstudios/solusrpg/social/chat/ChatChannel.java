@@ -8,6 +8,7 @@ package me.dbstudios.solusrpg.social.chat;
 import java.io.File;
 import java.util.Set;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
+import me.dbstudios.solusrpg.social.Group;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,7 +17,7 @@ import org.bukkit.configuration.file.FileConfiguration;
  *
  * @author Tyler Lartonoix
  */
-public interface ChatChannel {
+public interface ChatChannel extends Group<RpgPlayer> {
     /**
      * Gets a <code>Set</code> of all members currently in this channel.
      *

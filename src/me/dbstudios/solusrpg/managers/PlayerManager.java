@@ -4,15 +4,19 @@
  */
 package me.dbstudios.solusrpg.managers;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import me.dbstudios.solusrpg.SolusRpg;
+import me.dbstudios.solusrpg.entities.OfflineRpgPlayer;
 import me.dbstudios.solusrpg.entities.RpgPlayer;
 import me.dbstudios.solusrpg.exceptions.RpgPlayerConfigException;
 import me.dbstudios.solusrpg.tasks.PlayerReloadTask;
+import me.dbstudios.solusrpg.util.Directories;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -42,6 +46,30 @@ public class PlayerManager {
 
     public static RpgPlayer get(Player player) {
 	return PlayerManager.get(player.getUniqueId());
+    }
+
+    public static OfflineRpgPlayer getOfflinePlayer(String name) {
+        if (name.length() > 2)
+            try {
+                File dir = new File(Directories.DATA + name.substring(0, 2).toLowerCase());
+
+                if (dir.exists()) {
+                    File[] files = dir.listFiles(new FilenameFilter() {
+                        public boolean accept(File dir, String name) {
+                            if (name.substring(name.lastIndexOf(".") + 1).equalsIgnoreCase("yml"))
+                                return true;
+
+                            return false;
+                        }
+                    });
+
+                    for (File f : files)
+                        if (f.getName().toLowerCase().startsWith(name.toLowerCase()))
+                            return new OfflineRpgPlayer(f);
+                }
+            } catch (RpgPlayerConfigException e) {}
+
+        return null;
     }
 
     public static boolean exists(UUID uuid) {
